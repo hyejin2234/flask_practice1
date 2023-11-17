@@ -1,0 +1,162 @@
+:root {
+  --red: #f07167;
+  --default-blue: #0081a7;
+  --light-blue: #00afb9;
+  --nav-blue: #cfe2e4;
+  --light-grey: #d9d9d9;
+  --medium-grey: #c6c4c4;
+  --deep-grey: #a4a4a4;
+  --font-grey: #676767;
+}
+/*폰트*/
+@font-face {
+  font-family: 'Inter'; /*font 이름*/
+  font-style: 'normal'; /* font 스타일 정의 (기울임, 일반) */
+  font-weight: 400; /* font 굵기 정의 */
+  /* 브라우저&디바이스 환경에 따른 font 파일 위치 정의 */
+  src: url('/static/Inter-font.ttf') format('truetype');
+}
+
+/*****************헤더 & 내비게이션*****************/
+header {
+  display: flex;
+  justify-content: center;
+  margin: 0px;
+  padding: 15px;
+  padding-top: 20px;
+}
+
+#logo-container {
+  flex: 1;
+  text-align: center;
+}
+
+#logo {
+  height: 80px;
+}
+
+#loggedin-account {
+  flex: 1;
+  text-align: right;
+  position: absolute;
+  right: 15px;
+  top: 50px;
+  font-size: 15px;
+}
+
+#loggedin-account img {
+  display: inline-block;
+  vertical-align: middle;
+  width: 30px;
+}
+
+/*navigation*/
+.navbar {
+  background-color: #cfe2e4;
+  text-align: center;
+  height: 60px;
+}
+
+.nav-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-item {
+  margin: 0 60px;
+  position: relative;
+  top: 20px;
+}
+
+.nav-item a {
+  text-decoration: none;
+  color: black;
+  font-weight: bold;
+}
+
+#my-point{
+  display: flex;
+  justify-content: flex-end;
+  color: var(--red);
+}
+
+#my-point-container{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  width: 200px;
+}
+
+
+/*페이지 컨텐츠 제목*/
+.contents-title {
+  display: inline;
+  padding-left: 40%;
+  padding-bottom: 5px;
+  border-bottom: solid black 1pt;
+}
+
+/*body*/
+body {
+  font-family: Inter;
+  margin: 0;
+  padding: 0;
+}
+
+a, a:visited{
+  color:#1d1d1d;
+  text-decoration: none;
+}
+
+
+/*입력 폼 가운데 정렬*/
+.outer {
+  text-align: center;
+  border-radius: 10px;
+}
+
+/*1.상품등록 8.회원가입 정렬*/
+.signup-inner {
+  display: inline-block;
+  text-align: left;
+}
+
+/*페이지 제목: main-header*/
+.main-header {
+  text-align: center;
+}
+
+/*페이지 제목왼쪽 정렬: main-header-left*/
+.main-heade-left {
+  text-align: left;
+}
+
+.main-hr {
+  background: #00afb9;
+  height: 1px;
+  width: 60%;
+  border: 0;
+}
+.main-hr__padding {
+  background: #00afb9;
+  height: 1px;
+  width: 100%;
+  border: 0;
+}
+
+/*padding 오 왼 15%: padding*/
+.padding {
+  padding-left: 15%;
+  padding-right: 15%;
+}
+
+/*warning 문구: 색상, 폰트사이즈 통일*/
+.warning-msg {
+  color: red;
+  font-size: 10px
+}
+

@@ -1,0 +1,124 @@
+/*가운데 정렬*/
+.signup-inner {
+    display: inline-block;
+    text-align: left;
+}
+
+.login-inner {
+    display: inline-block;
+    text-align: center;
+    width: 500px;
+    height: 300px;
+    position: relative;
+    top: 30px;
+    border: 1px solid #C6C4C4;
+    border-radius: 5px;
+}
+
+.ranking-inner {
+    font-size: 15px;
+    padding: 0 20% 0 20%;
+    text-align: center;
+}
+
+    .ranking-inner img {
+        width: 80px;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .ranking-inner td {
+        padding: 20px;
+        border-bottom: 1px solid #d9d9d9;
+    }
+
+/*8번화면 중복체크 버튼*/
+.중복체크 {
+    border: none;
+    border-radius: 5px;
+    background-color: #d9d9d9;
+    color: #000000;
+}
+    .중복체크:hover {
+        background-color: #a4a4a4;
+    }
+
+/*9번화면 아이디, 비밀번호 입력 칸*/
+#input-ID {
+    width: 200px;
+    height: 30px;
+    font-size: 15px
+}
+#input-PW {
+    width: 200px;
+    height: 30px;
+    font-size: 15px
+}
+
+/*9번화면 버튼*/
+.submit-btn {
+    line-height: 50%;
+}
+#login-btn {
+    border-radius: 5px;
+    width: 200px;
+    height: 30px;
+    font-size: 15px;
+    border: none;
+}
+#signup-btn {
+    border-radius: 5px;
+    width: 200px;
+    height: 30px;
+    font-size: 15px;
+    border: none;
+}
+
+/*10번화면 level*/
+.level {
+    color: #a4a4a4;
+    font-size: 20px;
+}
+
+/*10번화면 월간 랭킹 포인트 가로 막대그래프*/
+.bar-container {
+    width: 300px;
+    height: 40px;
+    background-color: #f0f0f0;
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.bar {
+    height: 100%;
+    background-color: #0081a7;
+    width: 0;
+    position: absolute;
+    transition: width 1s;
+}
+
+/*10번화면 주간랭킹*/
+#weekly-rank {
+    text-align: left;
+    width: 200px;
+    line-height: 50%;
+    float: right;
+}
+
+/*10번화면 대학 선택 버튼*/
+.btn10 {
+    width: 110px;
+    border-color: #00afb9;
+    border-radius: 10px;
+}
+    .btn10:hover {
+        background-color: #00afb9;
+        color: white;
+    }
+#btn10-active {
+    width: 110px;
+    color: white;
+    background-color: #00afb9;
+    border-color: #00afb9;
+    border-radius: 10px;
+}

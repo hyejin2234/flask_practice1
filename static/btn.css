@@ -1,0 +1,64 @@
+/*******************버튼**************************/
+/*텍스트 색상*/
+a,
+a:visited {
+    text-decoration: none;
+}
+
+a.button {
+    display: block;
+    position: relative;
+    float: left;
+    width: 120px;
+    padding: 0;
+    font-weight: 600;
+    text-align: center;
+    line-height: 50px;
+    border-radius: 5px;
+    transition: all 0.2s;
+}
+.flex-container3 a{
+    font-size: 10pt;
+    width: 200px;
+    border-radius: 10px;
+    margin: 20px 10px 0 0;
+}
+#item-info-container a.button{
+    margin: 10px 20px 10px 0;
+}
+
+.btnDefaultblue {
+    background: var(--default-blue);
+    color: #FFF;
+}
+
+.btnBorderDefaultblue {
+    border: 1px solid var(--default-blue);
+    color: black;
+}
+
+.btnNavblue {
+    border: 1px solid var(--nav-blue);
+    background-color: var(--nav-blue);
+    color: black;
+}
+
+.btnLightblue{
+    background: var(--light-blue);
+    color: #fff;
+    border: 0;
+}
+
+/* FADE */
+/*장바구니 및 바로 구매 호버 효과*/
+.btnFade.btnDefaultblue:hover {
+    background: #0a637e;
+}
+.btnFade.btnBorderDefaultblue:hover{
+    border-color: var(--light-grey);
+    background: var(--light-grey);
+}
+.btnFade.btnLightblue:hover{
+    background: var(--default-blue);
+    color: #fff;
+}

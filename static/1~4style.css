@@ -1,0 +1,551 @@
+/*****************페이지 레이아웃******************/
+#order-page {
+    padding-left: 20%;
+    padding-right: 20%;
+}
+
+/****************flex/grid layout**********************/
+.main-header__flex-container {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    gap: 10px;
+}
+
+#regitem-container {
+    display: grid;
+}
+
+.filter__flex-container {
+    display: flex;
+    align-items: center;
+    margin-top: 47px;
+}
+
+.price-rate-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.flex-container1 {
+    display: flex;
+    flex-flow: column wrap;
+    align-items: center;
+}
+
+.flex-container2 {
+    display: flex;
+    justify-content: center;
+    padding: 5pt;
+    margin-bottom: 5pt;
+    border-bottom: 1px solid var(--medium-grey);
+}
+
+.flex-container3 {
+    display: flex;
+    justify-content: center;
+}
+
+.flex-container {
+    display: flex;
+    flex-flow: column wrap;
+    align-items: center;
+}
+
+/*1.html*/
+#regitem-container {
+    display: flex;
+    justify-content: center;
+}
+
+#regitem {
+    
+    display: grid;
+    width: 60%;
+    justify-items: stretch;
+    /* <hr> width와 맞춤 */
+    grid-template-rows: 68px repeat(3, 26px) 78px repeat(4, 26px);
+    grid-template-columns: 70px 1fr;
+    grid-gap: 26px 10px;
+    grid-template-areas:
+        "itemname      input-itemname "
+        "  price         input-price  "
+        "courseinfo  input-courseinfo1"
+        "    .       input-courseinfo2"
+        "description input-description"
+        "    tag          input-tag   "
+        "uploadFile  input-uploadFile"
+        "uploadImage input-uploadImage"
+        "   submit         submit     ";
+}
+@media (min-width:973px) {
+    #regitem{
+        grid-template-columns: 70px 500px;
+    }
+    #regitem{
+        width:580px;
+    }
+  }
+/*1row*/
+#regitem-itemname {
+    grid-area: itemname;
+}
+#regitem-input-itemname {
+    grid-area: input-itemname;
+    
+}
+#regitem-input-itemname input{
+    margin-bottom: 5px;
+}
+
+/*row4*/
+#regitem-price {
+    grid-area: price;
+}
+#regitem-input-price {
+    grid-area: input-price;
+}
+
+/*row5*/
+#regitem-courseinfo{
+    grid-area: courseinfo;
+}
+#regitem-input-courseinfo1{
+    grid-area: input-courseinfo1;
+    display: flex;
+    align-items: center;
+    justify-content: 1 1 1;
+}
+
+/*row6*/
+#regitem-input-courseinfo2{
+    grid-area: input-courseinfo2;
+}
+
+/*row7*/
+#regitem-description{
+    grid-area: description;
+    
+}
+#regitem-input-description{
+    grid-area: input-description;
+    height: 80px;
+}
+
+/*row11*/
+#regitem-tag{
+    grid-area: tag;
+}
+#regitem-input-tag{
+    grid-area: input-tag;
+}
+
+/*row12*/
+#regitem-uploadFile{
+    grid-area: uploadFile;
+}
+#regitem-input-uploadFile{
+    grid-area: input-uploadFile;
+}
+
+/*row13*/
+#regitem-uploadImage{
+    grid-area: uploadImage;
+}
+#regitem-input-uploadImage{
+    grid-area: input-uploadImage;
+}
+#regitem-input-uploadFile, #regitem-input-uploadImage{
+    color: var(--deep-grey);
+    height: 25px;
+    border: 1px solid var(--light-grey);
+    padding: 6px 12px;
+    cursor: pointer;
+}
+
+/*item in flex*/
+/*2.html*/
+.filter__flex-item {
+    flex-basis: 50%;
+}
+
+/******************4.html*************************/
+.flex-container1 h1 {
+    font-size: 40pt;
+    margin-bottom: 15px;
+}
+
+.flex-container1 div {
+    font-size: 15pt;
+}
+
+#order_warning-msg {
+    max-width: 413px;
+    word-wrap: break-word;
+    margin: 5px 40px 0 40px;
+}
+
+.orderInfo-header {
+    width: 100pt;
+    font-weight: 600;
+    font-size: 12pt;
+    color: var(--light-blue);
+    text-align: left;
+
+}
+
+.orderInfo-data {
+    width: 200pt;
+    font-size: 12pt;
+    text-align: left;
+}
+
+/*******************1.html************************/
+/*페이지 제목 '상품등록'*/
+/*인풋창*/
+input {
+    width: 100%;
+    height: 20px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: var(--light-grey);
+}
+
+/*필드 제목의 위치*/
+th {
+    vertical-align: top;
+}
+
+.input-with-icon {
+    position: relative;
+    background-repeat: no-repeat;
+    background-size: 18px 18px;
+    background-position: 95% 50%;
+}
+
+/*상품 타입 선택 크기 조절*/
+#item-type {
+    width: 20px;
+    height: 15px;
+}
+
+.course-type,
+.course-faculty,
+.course-number,
+.course-major,
+#regitem__professor,
+#search-item__department {
+    width: 48%;
+    height: 25px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: var(--light-grey);
+}
+
+/*****************************2.html*********************************/
+/*검색창*/
+#search-item {
+    background-color: #f4f4f4;
+    border-radius: 5px;
+    padding: 10pt;
+    text-align: center;
+}
+
+#search-item input[type="search"] {
+    background-image: url(../../static/img/search_icon.svg);
+    width: 70%;
+    margin: 5pt;
+}
+
+#search-item div {
+    margin-bottom: 5pt;
+}
+
+#search-item__type {
+    font-size: 10pt;
+}
+
+/*그리드*/
+#grid-item {
+    display: grid;
+    grid-template-columns: 1fr 5fr;
+}
+
+/*필터*/
+.filter__flex-container p {
+    margin: 5px;
+    color: #5a5a5a;
+}
+
+#filter-reset-butn {
+    appearance: none;
+    border: none;
+    background: none;
+    outline: none;
+    cursor: pointer;
+    color: var(--deep-grey);
+}
+
+#filter-body label {
+    font-size: 10pt;
+    color: var(--deep-grey);
+}
+
+#filter-body input {
+    width: 100%;
+}
+
+/*정렬*/
+#view-item .sorting {
+    text-align: right;
+    font-size: 10pt;
+    margin-top: 10pt;
+}
+
+/**************************item card***************************/
+#items {
+    list-style: none;
+}
+
+.item-card {
+    border: 1px var(--medium-grey) solid;
+    border-radius: 10px;
+    box-shadow: 2px 2px 2px var(--light-grey);
+    padding: 15pt;
+    margin: 10pt;
+    display: grid;
+    grid-template-columns: 120pt 1fr;
+}
+
+.item-card__course-and-prof {
+    font-size: 10pt;
+    color: var(--font-grey);
+}
+
+.item-card__type {
+    color: var(--font-grey);
+    padding-bottom: 6px;
+}
+
+.item-card__type span {
+    padding: 4px 7px 4px 7px;
+    margin-right: 2px;
+    font-size: 12px;
+    background-color: var(--light-grey);
+    border-radius: 3px;
+}
+
+.item-card__item-name {
+    font-size: 15pt;
+}
+
+.item-card__seller {
+    font-size: 12pt;
+    color: var(--font-grey);
+}
+
+.item-card__price {
+    color: red;
+    flex-basis: 50%;
+}
+
+.item-card__rate {
+    color: var(--font-grey);
+    justify-content: right;
+}
+
+.item-card__tag {
+    color: var(--font-grey);
+    display: flex;
+    text-align: right;
+}
+
+.item-card__review {
+    text-align: right;
+}
+
+.item-card__review a {
+    text-decoration: none;
+    color: var(--default-blue);
+    font-weight: bold;
+    padding: 2px;
+    border-radius: 5px;
+    border: 1.5px solid var(--light-grey);
+}
+
+/*페이지네이션*/
+#view-item .pagination {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+}
+
+#view-item .pagination li {
+    display: inline;
+    margin: 5px;
+}
+
+#view-item .pagination a {
+    text-decoration: none;
+    color: black;
+}
+
+/********************3.html*************************/
+/******제품 이미지 및 정보, 구매버튼******/
+#order-page-container {
+    display: grid;
+    grid-template-rows: 278px 80px 300px;
+    grid-template-columns: 278px 1fr;
+    grid-auto-rows: 278px;
+    grid-gap: 30px 40px;
+    margin: 50px 0 50px 0;
+}
+
+.item-detail__sub-img-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.item-card__price {
+    font-size: 20px;
+}
+
+/*3.html 큰 상품사진*/
+.item-detail__main-img {
+    max-height: 278px;
+    height: auto;
+    width: auto;
+    object-fit: contain;
+    border: 1px var(--light-grey) solid;
+}
+
+/*3.html 작은 상품사진*/
+.item-detail__sub-img {
+    max-height: 85px;
+    height: auto;
+    width: auto;
+    border: 1px var(--light-grey) solid;
+}
+
+/*****상세설명, 리뷰*****/
+#order__view-rate__container {
+    grid-column: 1/3;
+    grid-row: 3/4;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 52px 100px;
+}
+
+#order__show-view-rate {
+    grid-column: 1/3;
+    padding: 20px;
+    border: 1px solid var(--light-grey);
+    border-top: 0;
+}
+
+#descr-screen {
+    font-size: 14px;
+}
+
+/*button*/
+#regitem-submit {
+    grid-area: submit;
+    justify-self: center;
+    display: block;
+    position: relative;
+    width: 200px;
+    height: 30px;
+    padding: 0;
+    font-weight: 600;
+
+    border-radius: 5px;
+    transition: all 0.2s;
+}
+
+#filter-submit {
+    display: block;
+    position: relative;
+    height: 30px;
+    padding: 0;
+    font-weight: 600;
+    text-align: center;
+
+    border-radius: 5px;
+    transition: all 0.2s;
+}
+
+#order-btn {
+    width: 80%;
+    height: 40px;
+    line-height: 2.5;
+    place-self: center;
+}
+
+#order__view-rate__container.button {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: none;
+    box-shadow: 1px 1px var(--light-grey);
+    font-weight: 600;
+    font-size: 13pt;
+    text-align: center;
+    line-height: 50px;
+    transition: all 0.2s;
+}
+
+#descr-btn {
+    border-top-left-radius: 5px;
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: none;
+    box-shadow: 1px 1px var(--light-grey);
+    font-weight: 600;
+    font-size: 13pt;
+    text-align: center;
+    line-height: 50px;
+    transition: all 0.2s;
+}
+
+#descr-btn:hover,
+#review-btn:hover {
+    background-color: var(--default-blue);
+    color: #fff;
+}
+
+#descr-btn:hover {
+    cursor: pointer;
+}
+
+#review-btn {
+    border-top-right-radius: 5px;
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: none;
+    box-shadow: 1px 1px var(--light-grey);
+    font-weight: 600;
+    font-size: 13pt;
+    text-align: center;
+    line-height: 50px;
+    transition: all 0.2s;
+}
+
+/*********************이미지*******************/
+/*별&다운로드*/
+.input-img {
+    max-width: 20px;
+    max-height: 20px;
+    width: auto;
+    height: auto;
+}
+
+/*2.html item card 상품사진*/
+.item-card__img {
+    max-height: 100pt;
+    height: auto;
+    width: auto;
+    border: 1px var(--light-grey) solid;
+}

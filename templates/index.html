@@ -1,0 +1,37 @@
+<!DOCTYPE html>  
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Home</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+        <script src="{{ url_for('static', filename='main.js') }}" defer></script>
+    </head>
+    <body>
+        {% include 'header-and-nav.html'%}
+        <ul class="navbar__menu">
+            <!--href 속 "\list" 등이 어디로 연결될지 application.py에서 정의해주어야 한다.-->
+            <p>페이지 접근 용이성을 위해 임시로 써놓음</p>
+            <li><a href="\1~4\1">상품 등록</a></li>
+            <li><a href="\1~4\2">전체상품조회</a></li>
+            <li><a href="\1~4\3">상품세부정보</a></li>
+            <li><a href="\1~4\4">구매완료화면</a></li>
+            
+            <li><a href="\5~7\5">리뷰작성</a></li>
+            <li><a href="\5~7\6">리뷰전체조회</a></li>
+            <li><a href="\5~7\7">리뷰상세</a></li>
+
+            <li><a href="\8~10\signup">회원가입</a></li>
+            <li><a href="\8~10\login">로그인</a></li>
+            <li><a href="\8~10\ranking">랭킹</a></li>
+        </ul>
+        <a href="#" class="navbar__toogleBtn"> <i class="fas fa-bars"></i> </a>
+
+        <section>
+            <!-- navigation bar와 같은 페이지의 중복 부분을 cpy하지 않고 서브 페이지에서 모두 동일하게 사용하도록 하는 코드 -->
+            {% block section %}
+
+            {% endblock section %}
+        </section>
+    </body>
+</html>

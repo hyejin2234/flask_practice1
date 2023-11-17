@@ -1,0 +1,90 @@
+3. 전체 파일 이름 통일: 번호+이름 (예: 10-ranking.html)
+5. 교수님께 만들지 않은 화면에 대한 링크 어떻게 처리하는지 질문
+   (예: 결제완료 페이지는 원래 구매 > 결제 > 결제완료를 통해서만 접근가능.
+   하지만 여기에서는 '결제' 화면이 없다. 그러면 결제완료 페이지에는 어떻게 접근하나?
+   또한, 홈 화면을 만들어야 하나?)
+
+backup
+-> 1.html 상품등록 칸
+
+
+<table>
+                        <tr><!-- 상품 타입: 2에서 반복됨 -->
+                            <th></th>
+                            <td>
+                                <p class="warning-msg">본인의 순수한 창작물이 아닌 상품은 등록할 수 없습니다.</p>
+                            </td>
+
+                        </tr>
+                        <tr><!-- 가격 -->
+                            <th>가격</th>
+                            <td>
+                                <input type="number" class="input-with-icon" id="price" name="price"
+                                    oninput="addCommas(this);" style="background-image: url(/static/img/point.svg);"
+                                    required><br><br>
+                            </td>
+                        </tr>
+                        <tr> <!--강의 -->
+                            <th>강의</th>
+                            <td>
+                                <!--전공/교양-->
+                                <select class="course-type" name="course-type">
+                                    <option value="" disabled selected>전공/교양</option>
+                                    <option value="major">전공</option>
+                                    <option value="libral">교양</option>
+                                </select>
+                                <!--단과대-->
+                                <select class="course-faculty" name="faculty">
+                                    <option value="" disabled selected>단과대</option>
+                                    <option value="libarts">인문대</option>
+                                    <option value="sosci">사과대</option>
+                                    <option value="natsci">자연대</option>
+                                    <option value="eng">공대</option>
+                                    <option value="music">음대</option>
+                                    <option value="art">조예대</option>
+                                    <option value="edu">사범대</option>
+                                    <option value="busniss">경영대</option>
+                                    <option value="converg">신융대</option>
+                                    <option value="medicine">의대</option>
+                                    <option value="nursing">간호대</option>
+                                    <option value="pharmacy">약대</option>
+                                    <option value="scranton">스크대</option>
+                                    <option value="ai">인지대</option>
+                                    <option value="hokma">호크마</option>
+                                </select>
+                                <!--과목명/학수번호-->
+                                <input class="course-number" class="input-with-icon" type="search" name="course-number"
+                                    placeholder="과목명/학수번호" style="background-image: url(/static/img/search_icon.svg);">
+                                <!--백엔드연동: 데이터베이스 내에서 검색하여 선택하게 함-->
+                                <!-- 교수님 -->
+                                <input type="text" id="regitem__professor" name="professor" placeholder="교수님 성함"
+                                    style="height: 20px; width: 47%"><br><br>
+                            </td>
+                        </tr>
+                        <tr><!--상세설명-->
+                            <th>상세설명</th>
+                            <td>
+                                <input type="text" id="regitem__description" name="description"
+                                    placeholder="상품에 대해 간략하게 설명해주세요." required>
+                                <br><br>
+                            </td>
+                        </tr>
+                        <tr><!--해시태그-->
+                            <th>해시태그</th>
+                            <td><input type="text" id="tag" name="tag" placeholder=" #를 기준으로 구분됩니다. 예) #자료구조 #연결리스트"
+                                    required><br><br></td>
+                        </tr>
+                        <tr><!-- 판매 상품 파일 등록 -->
+                            <th>상품등록</th>
+                            <td><input type="file" id="item-upload" name="item-upload" placeholder="상품을 등록해주세요."
+                                    required><br><br></td>
+                        </tr>
+                        <tr><!-- 사진 등록 -->
+                            <th>사진등록</th>
+                            <td><!-- 추가: class 5번 화면과 같은 이름으로 -->
+                                <input type="file" id="photo-upload" class="file-input" name="photo-upload"
+                                    placeholder="처음으로 불러온 사진이 대표사진으로 설정됩니다."><br><br>
+                            </td>
+                        </tr>
+                    </table>
+       

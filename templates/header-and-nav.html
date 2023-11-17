@@ -1,0 +1,41 @@
+<header>
+    <div class="header">
+        <!--logo-->
+        <div id="logo-container">
+            <a href="\index"><img id="logo" src="../../static/img/logo.png"></a>
+        </div>
+        <!--프로필, 사용자이름, 로그아웃-->
+        <div id="loggedin-account">
+            <!--이미지 추가-->
+            
+            <!--마이페이지:이화인클릭 / 로그인화면:로그아웃클릭-->
+            <div id="my-point-container">
+                <div>
+                <img src="../../static/img/profile.jpg">
+                <a href="">이화인</a> | <a href="../8~10/login">로그아웃</a></div>
+                <div id="my-point">
+                    <a href="../../8~10/ranking"><!--백에서 받아오기-->1300</a>  
+                    <img class="input-img" style="max-width: 15px; padding-left: 5px;" src="../../static/img/point.svg">
+                </div>
+            </div>
+
+        </div>
+    </div>
+</header>
+
+<!--내비게이션-->
+<nav class="navbar">
+    <ul class="nav-list">
+        <!--11주차 강의 내용 추가: 시작-->
+        {% if session['id'] %}
+        <li><a href="/logout"><b>{{session['id']}}님 반갑습니다!</b> logout</a></li>
+        {% else%}
+        <li><a href="/login"></a></li>
+        {% endif %}
+        <!--11주차 강의 내용 추가: 끝-->
+        <li class="nav-item"><a href="\1~4\1">상품등록</a></li>
+        <li class="nav-item"><a href="\1~4\2">상품보기</a></li>
+        <li class="nav-item"><a href="\5~7\5">리뷰작성</a></li>
+        <li class="nav-item"><a href="\8~10\ranking">랭킹</a></li>
+    </ul>
+</nav>
