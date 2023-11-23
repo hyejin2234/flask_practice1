@@ -3,19 +3,15 @@
 <head>
     <meta charset="utf-8" />
     <title></title>
+    <link rel="stylesheet" href="../../static/style.css">
+    <link rel="stylesheet" href="../../static/8~10Style.css">
+    <link rel="stylesheet" href="../../static/btn.css">
 </head>
 
 <body>
 
-
-
-
-
-    <link href="../../static/style.css" rel="stylesheet" />
-
     {% extends "index.html" %}
-
-
+    <!--11주차 교수님 제공 코드 복붙-->
     {% block section %}
     {% with mesg = get_flashed_messages() %}
     {% if mesg !=[] %}
@@ -105,8 +101,5 @@
     </div>
     {% endblock section %}
 
-    <link rel="stylesheet" href="../../static/style.css">
-    <link rel="stylesheet" href="../../static/8~10Style.css">
-    <link rel="stylesheet" href="../../static/btn.css">
 </body>
 </html>
