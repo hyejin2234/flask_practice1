@@ -24,7 +24,8 @@
                         
                             <div class="box middle">
                                 <div class="review-info__title">
-                                    <p id="review-info__title">오소플 정리본 <!--{{title}}--></p>
+                                    <!--   <p id="review-info__title">오소플 정리본 ></p>  -->
+                                    <input type="text" name="name" id="review-info__title" value="{{name}}">
                                 </div>
                                 <div class="review-info__text">
                                     <span>과목명<!--{{subject}}--></span>
@@ -40,7 +41,7 @@
                             </div>
                         
                             <div class="box right">
-                            <form class="mb-3" name="myform" id="myform" method="post">
+                            <form class="mb-3" name="myform" id="myform" action="/submit_review_post1" method="post" enctype="multipart/form-data"> <!--이거 커밋해야됨-->
                                 <fieldset>
                                     <p id="selectedRating" class="rating-num">0.0</p>
                                     <input type="radio" name="reviewStar" value="5" id="rate1"><label for="rate1">★</label>

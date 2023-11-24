@@ -45,23 +45,51 @@ def view_review_detail():
 
 @application.route("/submit_review_post", methods=['POST'])  ##이것도 커밋
 def reg_review_submit_post():
-    image_file=request.files["chooseFile"]                  
+    image_file=request.files["chooseFile"]
     image_file.save("static/images/{}".format(image_file.filename))
-    data=request.form                                       ## form데이터에서 전송된 모든 데이터를 data에 저장 
-    DB.reg_review(data['키값'], data, image_file.filename)  ##data['name']에서 name으로 들어오는게 없는데 이거 수정필요! #데이터에 리뷰정보등록
+    data=request.form                                       ## form데이터 data에 저장
+    DB.reg_review(data['name'], data, image_file.filename)   #데이터에 리뷰정보 등록
 
-    return render_template("전체리뷰화면.html", data=data,img_path="static/images/{}".format(image_file.filename))  ## 어떤 html로 이 정보보내서 렌더링할지 
+    return render_template("review.html", data=data,img_path="static/images/{}".format(image_file.filename))  ## 전쳬리뷰화면보여줌 
 
 
 @application.route("/reg_review_init/<name>/")  ## 이거 커밋!
-def reg_review_init(name):                      ## 리뷰등록누르면 name지정되서 리뷰작성화면으로 고고
+def reg_review_init(name):                      ## 리뷰등록누르면 상품name지정되서 리뷰작성화면
     return render_template("reg_reviews.html", name=name)
 
 ##@application.route("/reg_review", methods=['POST'])  ## 이게 필요한가? 커밋! 
 ##def reg_review():
 ##    data=request.form                                   ## post로 전송한 데이터
 ##    DB.reg_review(data)                                 ## DB객체의 'reg_review" 메서드 호출하여 등록된 리뷰 db에 등록
-##    return redirect(url_for('view_review'))             ##'view_review'라는 함수(또는 라우트)에 대한 URL을 생성하고, 그 URL로 클라이언트의 브라우저를 리디렉션(등록된 리뷰가 표시되는 페이지로 이동)
+##    return redirect(url_for('view_review'))             ##'view_review'라는 함수(또는 라우트)에 대한 URL을 생성하고, 그 URL로 클라이언트의 브라우저를 리디렉션(등록된리뷰가 표시되는 페이지로 이동)
+
+
+@application.route("/review_init/<name>/")  ## 이거 커밋!  ## 상품명 가져와서 그 상품에 대한 리뷰만 추출
+def reg_init(name):
+    reviews = DB.get_reviews(name)
+    return render_template("review.html", name=name, reviews = reviews)
+
+
+@application.route("/review")     ## 커밋
+def view_review():
+    page = request.args.get("page", 0, type=int)
+    per_page=6 # item count to display per page
+    per_row=1  # item count to display per row
+    row_count=int(per_page)
+    start_idx=per_page*page
+    end_idx=per_page*(page+1)
+    data = DB.get_reviews()   #데이터베이스에서 리뷰데이터 가져옴
+    item_counts = len(data)   # 전체 리뷰의 항목 수
+    data = dict(list(data.items())[start_idx:end_idx])
+    tot_count = len(data)     
+    for i in range(row_count): #last row_count 
+        if (i == row_count-1) and (tot_count%per_row != 0):
+            locals()['data_{}'.format(i)] = dict(list(data.items())[i*per_row:])
+        else:
+            locals()['data_{}'.format(i)] = dict(list(data.items())[i*per_row:(i+1)*per_row])
+    return render_template("review.html", datas=data. items(),row1=locals()['data_0'].items(), row2=locals()['data_1'].items(),
+                           row3=locals()['data_2'].items(), row4=locals()['data_3'].items(),row5=locals()['data_4'].items(), row6=locals()['data_5'].items(),
+                           limit=per_page, page=page, page_count=int((item_counts/per_page)+1), total=item_counts)
 
 
 # 8~10
@@ -87,7 +115,7 @@ def reg_item_submit():
     card=request.args.get("card")
     status=request.args.get("status")
     phone=request.args.get("phone")
-    
+
     print(name,seller,addr,email,category,card,status,phone) 
     #return render_template("reg_item.html")
     
