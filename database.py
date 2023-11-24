@@ -14,11 +14,11 @@ class DBhandler:
             "title": data['reviewTitle'],
             "review": data['reviewContents'],
             "rate": data['reviewStar'],
-           ## "keyword": data[''], # keyword 정보 받아와야되는데... 어떻게?
+            "keyword": data[''], # keyword 정보 받아와야되는데... 어떻게?
             "img_path": img_path,
-           ## "reviewer": data[''] # 리뷰작성한 유저정보 가지고 와야 되는데..얘는 어떻게 데려와?
+            "reviewer": data[''] # 리뷰작성한 유저정보 가지고 와야 되는데..얘는 어떻게 데려와?
         }
-        self.db.child("review").child(data['name']).child('reviewer').set(review_info)  #데이터베이스에 저장
+        self.db.child("review").child(data['name']).child(data['reviewer']).set(review_info)  #데이터베이스에 저장
         return True
     
     def get_reviews(self, target_name):  #커밋

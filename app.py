@@ -43,8 +43,8 @@ def view_reviews():
 def view_review_detail():
     return render_template("5-7/review_detail.html")
 
-@application.route("/submit_review_post", methods=['POST'])  ##이것도 커밋
-def reg_review_submit_post():
+@application.route("/submit_review_post", methods=['POST']) 
+def submit_review_post():
     image_file=request.files["chooseFile"]
     image_file.save("static/images/{}".format(image_file.filename))
     data=request.form                                       ## form데이터 data에 저장
@@ -53,11 +53,11 @@ def reg_review_submit_post():
     return render_template("review.html", data=data,img_path="static/images/{}".format(image_file.filename))  ## 전쳬리뷰화면보여줌 
 
 
-@application.route("/reg_review_init/<name>/")  ## 이거 커밋!
+@application.route("/reg_review_init/<name>/")  
 def reg_review_init(name):                      ## 리뷰등록누르면 상품name지정되서 리뷰작성화면
     return render_template("reg_reviews.html", name=name)
 
-##@application.route("/reg_review", methods=['POST'])  ## 이게 필요한가? 커밋! 
+##@application.route("/reg_review", methods=['POST'])  ## 이게 필요한가? 
 ##def reg_review():
 ##    data=request.form                                   ## post로 전송한 데이터
 ##    DB.reg_review(data)                                 ## DB객체의 'reg_review" 메서드 호출하여 등록된 리뷰 db에 등록
@@ -67,7 +67,8 @@ def reg_review_init(name):                      ## 리뷰등록누르면 상품n
 @application.route("/review_init/<name>/")  ## 이거 커밋!  ## 상품명 가져와서 그 상품에 대한 리뷰만 추출
 def reg_init(name):
     reviews = DB.get_reviews(name)
-    return render_template("review.html", name=name, reviews = reviews)
+    tot_count = len(reviews)
+    return render_template("review.html", name=name, reviews = reviews.items(), total=tot_count())
 
 
 @application.route("/review")     ## 커밋
