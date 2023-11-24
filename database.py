@@ -8,8 +8,8 @@ class DBhandler:
 
         firebase = pyrebase.initialize_app(config)
         self.db = firebase.database()
-   
-    #커밋
+
+     #커밋
     def reg_reveiw(self, data, img_path):
         review_info ={
             "title": data['reviewTitle'],
