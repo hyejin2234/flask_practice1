@@ -51,32 +51,38 @@ def view_review_detail():
 def submit_review_post():
     image_file=request.files["chooseFile"]
     image_file.save("static/images/{}".format(image_file.filename))
-    data=request.form                                       
-    DB.reg_review(data['name'], data, image_file.filename)  
+    data=request.form
+    DB.reg_review(data['name'], data, image_file.filename)
     #여기 두줄 커밋
-    return render_template("review.html", data=data,img_path="static/images/{}".format(image_file.filename))  ## 상품별리뷰화면보여줌 
-    #return redirect(url_for('view_all_review')) 전체리뷰화면
-    
-# 리뷰등록누르면 상품name지정 리뷰작성화면
-@application.route("/reg_review_init/<name>/")  
-def reg_review_init(name):
-    return render_template("reg_reviews.html", name=name)
+    #return render_template("review.html", data=data,img_path="static/images/{}".format(image_file.filename))  ## 상품별리뷰화면보여줌 
+    return redirect(url_for('view_all_review')) #전체리뷰화면
 
-##@application.route("/reg_review", methods=['POST'])  ## 이게 필요한가? 
+    # 리뷰등록누르면 상품name지정 리뷰작성화면#(추가커밋)
+@application.route("/reg_review_init/<name>/")
+def reg_review_init(name):
+    info = db.reference('item')
+    info_data = info.child(name).get()
+    professor = info_data.get("professor",None)    # 데이터베이스 item에서 교수님정보 가지고옴
+    subject = info_data.get("subject",None)        # 과목
+    subject_num = info_data.get("subject_num",None)# 학수번호
+    #reviewer = session['id']
+    return render_template("reg_reviews.html", name=name, subject=subject, professor=professor, subject_num=subject_num)
+
+##@application.route("/reg_review", methods=['POST'])  ## 이게 필요한가?
 ##def reg_review():
 ##    data=request.form                                   ## post로 전송한 데이터
 ##    DB.reg_review(data)                                 ## DB객체의 'reg_review" 메서드 호출하여 등록된 리뷰 db에 등록
 ##    return redirect(url_for('view_review'))             ##'view_review'라는 함수(또는 라우트)에 대한 URL을 생성하고, 그 URL로 클라이언트의 브라우저를 리디렉션(등록된리뷰가 표시되는 페이지로 이동)
 
 ## 이거 커밋!  ## 상품명 가져와서 그 상품에 대한 리뷰만 추출
-@application.route("/review_init/<name>/")  
+@application.route("/review_init/<name>/")
 def reg_init(name):
     reviews = DB.get_reviews(name)
     tot_count = len(reviews)
     return render_template("review.html", name=name, reviews = reviews.items(), total=tot_count())
 
  ##커밋 전체리뷰화면 커밋 이거는 헤더에 리뷰보기
-@application.route("")     # html 필요
+@application.route("/review")     # html 필요
 def view_all_review():
     page = request.args.get("page", 0, type=int)
     per_page=6 # item count to display per page
@@ -87,7 +93,7 @@ def view_all_review():
     data = DB.get_all_reviews()   #데이터베이스에서 리뷰데이터 가져옴
     item_counts = len(data)   # 전체 리뷰의 항목 수
     data = dict(list(data.items())[start_idx:end_idx])
-    tot_count = len(data)     
+    tot_count = len(data)
     for i in range(row_count): #last row_count 
         if (i == row_count-1) and (tot_count%per_row != 0):
             locals()['data_{}'.format(i)] = dict(list(data.items())[i*per_row:])
@@ -110,7 +116,7 @@ def view_review():
     data = DB.get_reviews()   #데이터베이스에서 리뷰데이터 가져옴
     item_counts = len(data)   # 전체 리뷰의 항목 수
     data = dict(list(data.items())[start_idx:end_idx])
-    tot_count = len(data)     
+    tot_count = len(data)
     for i in range(row_count): #last row_count 
         if (i == row_count-1) and (tot_count%per_row != 0):
             locals()['data_{}'.format(i)] = dict(list(data.items())[i*per_row:])
