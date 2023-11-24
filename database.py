@@ -8,8 +8,9 @@ class DBhandler:
 
         firebase = pyrebase.initialize_app(config)
         self.db = firebase.database()
-
-    def reg_reveiw(self, data, img_path): #커밋
+   
+    #커밋
+    def reg_reveiw(self, data, img_path):
         review_info ={
             "title": data['reviewTitle'],
             "review": data['reviewContents'],
@@ -20,8 +21,15 @@ class DBhandler:
         }
         self.db.child("review").child(data['name']).child(data['reviewer']).set(review_info)  #데이터베이스에 저장
         return True
-    
-    def get_reviews(self, target_name):  #커밋
+
+
+    #커밋
+    def get_reviews(self, target_name): 
         reviews = self.db.child("review").order_by_child("name").equal_to(target_name).get().val()
+        return reviews
+
+    #커밋
+    def get_all_reviews(self): 
+        reviews = self.db.child("review").get().val() #vla로 보내도 되는 지 모르겠음
         return reviews
 
