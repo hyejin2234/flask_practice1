@@ -92,7 +92,12 @@ def view_all_review():
     end_idx=per_page*(page+1)
     data = DB.get_all_reviews()   #데이터베이스에서 리뷰데이터 가져옴
     item_counts = len(data)   # 전체 리뷰의 항목 수
-    data = dict(list(data.items())[start_idx:end_idx])
+    #tot_count = 0
+    #for key, value in data.items():
+    #  if isinstance(value, dict):
+    #    user_count = len(value)
+    #    tot_count += user_count 키값이 두개이므로 반복문 돌면서 "name"에 해당하는 "id"의 개수 더함
+    data = dict(list(data.items())[start_idx:end_idx]) #한페이지에 index설정한 개수만큼 읽어오기
     tot_count = len(data)
     for i in range(row_count): #last row_count 
         if (i == row_count-1) and (tot_count%per_row != 0):
