@@ -31,17 +31,17 @@ def view_order_confirmation():
     return render_template("1~4/4.html")
 
 # 5~7
-@application.route("/5~7/reg_reviews")
+@application.route("/5-7/reg_reviews")
 def view_reg_review():
-    return render_template("5~7/reg_reviews.html")
+    return render_template("5-7/reg_reviews.html")
 
-@application.route("/5~7/review")
+@application.route("/5-7/review")
 def view_reviews():
-    return render_template("5~7/review.html")
+    return render_template("5-7/review.html")
 
-@application.route("/5~7/review_detail")
+@application.route("/5-7/review_detail")
 def view_review_detail():
-    return render_template("5~7/review_detail.html")
+    return render_template("5-7/review_detail.html")
 
 @application.route("/submit_review_post", methods=['POST'])  ##이것도 커밋
 def reg_review_submit_post():
