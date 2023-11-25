@@ -90,7 +90,8 @@ class DBhandler:
 
 
     ## 이 밑으로 쭉 다 내꺼
-    #(커밋)상품명까지 데이터베이스에 담음
+    
+    #데이터베이스에 저장
     def reg_review(self, data, img_path):
         review_info ={
             "name": data['name'],
@@ -99,26 +100,39 @@ class DBhandler:
             "rate": data['reviewStar'],
             #"keyword": data['keyword'],
             "img_path": img_path,
-            #"reviewer": session['id']
+            "reviewer": session['id']
         }
-        self.db.child("review").child(data['name']).child(data['title']).set(review_info)
+        name_id = data['name'] + '_' + session['id']
+        self.db.child("review").child(name_id).set(review_info)
         return True
 
 
-    #커밋
+    #상품별 리뷰 불러오기
     def get_reviews(self, target_name):
-        all_review = self.db.child("review").get()
+        all_review = self.db.child("review").get().val()
+        target_reviews = {}
         
         for review in all_review.each():
-            name = review.key()
-            review = review.val()
+            name = all_review.child("name").get()
             if name == target_name:
-                target_reviews[name] = review
-        reviews = self.db.child("review").order_by_child(session['id']).equal_to(target_name).get().val()
-        return reviews
+                target_reviews[review.key()] = review.val()
+    
+        return target_reviews
 
-    #커밋 전체리뷰불러오기
+    #전체리뷰불러오기
     def get_all_reviews(self):
-        reviews = self.db.child("review").get().val() #vla로 보내도 되는 지 모르겠음
-        return reviews
+        all_reviews = self.db.child("review").get().val() 
+        return all_reviews
+    
+    #커밋
+    def get_item_byname(self, name):
+        items = self.db.child("item").get()
+        target_value=""
+        print("###########",name)
+        for res in items.each():
+            key_value = res.key()
+            if key_value == name:
+                target_value=res.val()
+        return target_value
+
 

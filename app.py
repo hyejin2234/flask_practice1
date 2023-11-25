@@ -42,14 +42,9 @@ def view_order_confirmation():
 def view_reg_review():
     return render_template("5-7/reg_reviews.html")
 
-@application.route("/5-7/review")
-def view_reviews():
-    return render_template("5-7/review.html")
-
 @application.route("/5-7/review_detail")
 def view_review_detail():
     return render_template("5-7/review_detail.html")
-
 
 
 #리뷰 데이터 넘겨줌
@@ -61,7 +56,7 @@ def reg_reviews():
     DB.reg_review(data, image_file.filename)
     return redirect(url_for('view_all_review'))
 
-    # 리뷰등록누르면 상품name지정 리뷰작성화면
+#리뷰작성화면
 @application.route("/reg_review_init/<name>/")
 def reg_review_init(name):
     info = DB.reference('item')
@@ -74,14 +69,14 @@ def reg_review_init(name):
 
 
 ## 이거 커밋!  ## 상품명 가져와서 그 상품에 대한 리뷰만 추출
-@application.route("/review_init/<name>/")
-def reg_init(name):
-    reviews = DB.get_reviews(name)
-    tot_count = len(reviews)
-    return render_template("review.html", name=name, reviews = reviews.items(), total=tot_count())
+#@application.route("/review_init/<name>/")
+#def reg_init(name):
+    #reviews = DB.get_reviews(name)
+    #tot_count = len(reviews)
+    #return render_template("review.html", name=name, reviews = reviews.items(), total=tot_count())
 
 
-##커밋 전체리뷰화면 커밋 이거는 헤더에 리뷰보기
+## 전체리뷰화면 -> 헤더에 리뷰보기
 @application.route("/5-7/review")     # html 필요
 def view_all_review():
     page = request.args.get("page", 0, type=int)
@@ -92,31 +87,13 @@ def view_all_review():
     end_idx=per_page*(page+1) #현재페이지에 보여줄 리뷰의 끝 인덱스
     
     data = DB.get_all_reviews()
-    #전체리뷰의 개수 계산()
-    item_counts = sum(len(id_dict) for id_dict in data.values())
-    #item_counts = 0            
-    #for name_key, id_dict in data.items():
-    #    for id_key, review_dict in id_dict.items():
-    #        if 'title' in review_dict:     # 불러온 리뷰데이터 안에 title의 개수로 전체리뷰개수 계산
-    #            item_counts += 1
-    #tot_count = 0
-    
-    lowest_groups_dict = {}
-    for name_key, id_dict in data.items():
-        for id_key, review_dict in id_dict.items():
-                lowest_groups_dict[id_key] = {
-                    'title': review_dict['title'],
-                    'content': review_dict['content'],
-            }
-    
-    review_list = []
-    for _, group_dict in data.items():
-        for _, lowest_group in group_dict.items():
-            review_list.append(lowest_group)
-        
-    data = dict(list(data.items())[start_idx:end_idx]) #현재페이지에 보여줄 리뷰들만 읽어오기
-    tot_count = len(data)  #현재페이지에서 실제로 보여지는 개수(마지막페이지에서는 6개가 아닐 수 있으므로)
-    for i in range(row_count): #행 개수만큼 반복(6번) 
+    #전체 리뷰의 개수 계산
+    item_counts = len(data)
+    #현재페이지에 보여줄 리뷰들만 읽어오기
+    data = dict(list(data.items())[start_idx:end_idx]) 
+    #현재페이지에서 실제로 보여지는 개수
+    tot_count = len(data)
+    for i in range(row_count): #행 개수만큼 반복(6번)
         if (i == row_count-1): #마지막 행일 경우
             locals()['data_{}'.format(i)] = dict(list(data.items())[i*per_row:])
         else: #마지막 행이 아닌 경우
@@ -126,8 +103,8 @@ def view_all_review():
                            limit=per_page, page=page, page_count=int((item_counts/per_page)+1), total=item_counts)
 
 
-## 상픔별 리뷰화면 커밋 -> 상품상세화면에서 리뷰보기 클릭하면 나오는 걸로
-@application.route("/review")
+##커밋  상픔별 리뷰화면 -> 상품상세화면에서 리뷰보기 클릭하면 나오는 걸로
+@application.route("/review/<name>/")
 def view_review():
     page = request.args.get("page", 0, type=int)
     per_page=6 # 한페이지에 리뷰 6개
@@ -135,15 +112,14 @@ def view_review():
     row_count=int(per_page) #한페이지에 표시할 행 개수(6개)
     start_idx=per_page*page #현재페이지에 보여줄 리뷰의 시작인덱스
     end_idx=per_page*(page+1) #현재페이지에 보여줄 리뷰의 끝 인덱스
-    
-    data = DB.get_reviews()
-    
-    #전체리뷰의 개수 계산()
-    item_counts = len(data)   # 전체 리뷰의 항목 수
+    data = DB.get_reviews(name)
+    #전체 리뷰의 개수 계산
+    item_counts = len(data) 
+    #현재 페이지에 보여줄 리뷰만 추출
     data = dict(list(data.items())[start_idx:end_idx])
-    tot_count = len(data)
-    for i in range(row_count): #last row_count 
-        if (i == row_count-1) and (tot_count%per_row != 0):
+    
+    for i in range(row_count):
+        if (i == row_count-1): #마지막 row
             locals()['data_{}'.format(i)] = dict(list(data.items())[i*per_row:])
         else:
             locals()['data_{}'.format(i)] = dict(list(data.items())[i*per_row:(i+1)*per_row])
@@ -151,7 +127,13 @@ def view_review():
                            row3=locals()['data_2'].items(), row4=locals()['data_3'].items(),row5=locals()['data_4'].items(), row6=locals()['data_5'].items(),
                            limit=per_page, page=page, page_count=int((item_counts/per_page)+1), total=item_counts)
 
-
+#커밋 리뷰상세페이지
+@application.route("/view_review_detail/<name>/")
+def view_review_detail():
+    print("###name:",name)
+    data = DB.get_item_byname(str(name))
+    print("####data:",data)
+    return render_template("detail.html", name=name, data=data)
 
 
 
