@@ -1,35 +1,39 @@
-from flask import Flask, render_template, request 
+from flask import Flask, render_template, request,flash,redirect,url_for,session, jsonify
 from database import DBhandler
+import hashlib
 import sys
 application = Flask(__name__)
-
-DB = DBhandler()
+application.config["SECRET_KEY"]= "thisisoreo"
+DB=DBhandler() #database.py에 들어가면 클래스있음 (DB. 이용)
  
 @application.route("/") 
 def hello():
     return render_template("index.html")
 
-@application.route("/index")
-def comback_home():
-    return render_template("index.html")
-
 # 1~4
-@application.route("/1~4/1")
+@application.route("/1~4/item_reg")
 def view_reg_items():
-    return render_template("1~4/1.html")
+    return render_template("1~4/item_reg.html")
 
-@application.route("/1~4/2")
+@application.route("/1~4/view_item")
 def view_items():
-    return render_template("1~4/2.html")
+    return render_template("1~4/view_item.html")
 
-@application.route("/1~4/3")
+@application.route("/1~4/item_detail")
 def view_item_detail():
-    return render_template("1~4/3.html")
+    return render_template("1~4/item_detail.html")
 
-@application.route("/1~4/4")
+@application.route("/1~4/order")
+def view_item_detail():
+    return render_template("1~4/order.html")
+
+@application.route("/order_item")
 def view_order_confirmation():
+    #구매한후 구매자 포인트 감소
+    flash('1000포인트가 차감되었습니다')
+    DB.update_point(session['id'], 1000)
+    DB.update_ranking_point(session['id'], 1000)
     return render_template("1~4/4.html")
-
 
 
 
@@ -136,32 +140,75 @@ def view_review():
 
 
 # 8~10
-@application.route("/8~10/signup")
-def view_signup():
+#회원가입
+@application.route("/signup")
+def signup():
     return render_template("8~10/signup.html")
+@application.route("/signup_post",methods=['POST'])
+def register_user():
+    data=request.form
+    id=request.form['id']
+    pw=request.form['pw']
+    pw2=request.form['PWconfirm']
+    nname=request.form['nickname']
+    pw_hash=hashlib.sha256(pw.encode('utf-8')).hexdigest()
+    pw_hash2=hashlib.sha3_256(pw.encode('utf-8')).hexdigest()
+    #아이디중복확인
+    if 'check_duplicate_id' in request.form:
+        if DB.id_duplicate_check(id):
+            flash('사용할 수 있는 아이디입니다.')
+            return render_template("8~10/signup.html")
+        else:
+            flash('이미 존재하는 아이디입니다.')
+            return render_template("8~10/signup.html")
 
-@application.route("/8~10/login")
-def view_login():
-    return render_template("8~10/login.html")
+    #닉네임중복확인
+    if 'check_duplicate_nickname' in request.form:
+        if DB.nickname_duplicate_check(nname):
+            flash('사용할 수 있는 닉네임입니다.')
+            return render_template("8~10/signup.html")
+        else:
+            flash('이미 존재하는 닉네임입니다.')
+            return render_template("8~10/signup.html")
+    if pw!=pw2:
+        flash("비밀번호를 확인해주세요")
+        return render_template("8~10/signup.html")
+    else:
+        if DB.insert_user(data,pw_hash,pw_hash2):
+            flash("회원가입되었습니다.")
+            return render_template("8~10/login.html")
+        else:
+            flash("중복확인를 눌러주세요")
+            return render_template("8~10/signup.html")
 
-@application.route("/8~10/ranking")
-def view_ranking():
-    return render_template("8~10/ranking.html")
-
-@application.route("/submit_item")
-def reg_item_submit():
-    name=request.args.get("name")
-    seller=request.args.get("seller")
-    addr=request.args.get("addr")
-    email=request.args.get("email")
-    category=request.args.get("category")
-    card=request.args.get("card")
-    status=request.args.get("status")
-    phone=request.args.get("phone")
-
-    print(name,seller,addr,email,category,card,status,phone) 
-    #return render_template("reg_item.html")
     
+
+# 로그인 하기
+@application.route("/login")
+def login():
+    return render_template("8~10/login.html")
+@application.route("/login_confirm", methods=['POST'])
+def login_user():
+    id_=request.form['id']
+    pw=request.form['pw']
+    pw_hash = hashlib.sha256(pw.encode('utf-8')).hexdigest()
+    if DB.find_user(id_,pw_hash):
+        session['id']=id_
+        return redirect(url_for('hello')) #나중에 전체상품조회로 바꿀예정
+    else:
+        flash("Wrong ID or PW!")
+        return render_template("8~10/login.html")
+
+# 로그아웃
+@application.route("/logout")
+def logout_user():
+    session.clear()
+    return redirect(url_for('hello')) #나중에 전체상품조회로 바꿀예정
+    
+
+
+
+    ################
 @application.route("/submit_item_post",methods=['POST'])
 def reg_item_submit_post():
     image_file=request.files["file"]

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
     <html>
+        {% block section %}
         <head>
             <meta charset="UTF-8">
             <title>리뷰작성화면</title>
@@ -9,39 +10,39 @@
         </head>
         
         <body>
-            {% include 'header-and-nav.html' %}
+            {% include "index.html" %}
             <main class="padding" id="min_width_600">
-                <div class="main-header">
-                    <h1 class="main-header">리뷰 작성</h1> 
-                    <div class="main-hr__padding"></div><br>
-                </div>
-                    <!---------------->
+                <form class="mb-3" name="myform" id="myform" method="post" action="/reg_reviews" enctype="multipart/form-data">
+                    <div class="main-header">
+                        <h1 class="main-header">리뷰 작성</h1> 
+                        <div class="main-hr__padding"></div><br>
+                    </div>
+                        <!---------------->
                     <div class="grid-container-wrapper">
                         <div class="grid-container">
                             <div class="box left">
-                            <img src="../../static/img/logo.png" width="100%"style="max-height: 180px;" alt="상품 예시 사진입니다">
+                                <img src="../../static/img/logo.png" width="100%"style="max-height: 180px;" alt="상품 예시 사진입니다">
                             </div>
-                        
+
                             <div class="box middle">
-                                <div class="review-info__title">
-                                    <!--   <p id="review-info__title">오소플 정리본 ></p>  -->
-                                    <input type="text" name="name" id="review-info__title" value="{{name}}">
-                                </div>
+                                <!--상품  이름-->
+                                <input type="text" name="name" id="name" class="review-info__title" value="{{name}}"><br><br>
                                 <div class="review-info__text">
-                                    <span>과목명<!--{{subject}}--></span>
+                                    <!--subject 과목명-->
+                                    <input type="text" name="subject" id="subject" class="review-info__text" value="{{subject}}">
                                     <span>|</span>
-                                    <span>교수님<!--{{professor}}--></span>
+                                    <input type="text" name="professor" id="professor" class="review-info__text" value="{{professor}}">
                                     <span>|</span>
-                                    <span>학수번호<!--{{class_id}}--></span>
+                                    <input type="text" name="subject_id" id="subject_id" class="review-info__text" value="{{subject_id}}">
                                 </div>
                                 <div class="review-info__text">
                                     <img src="../../static/img/logo.png" width="25px" height="25px">
-                                    <span style="align-self: center;">작성자 이름<!--{{name}}--></span>
+                                    <input type="text" name="seller_id" id="seller_id" class="review-info__text" value="{{seller_id}}" style="text-align: left;">
                                 </div>
                             </div>
                         
                             <div class="box right">
-                            <form class="mb-3" name="myform" id="myform" action="/submit_review_post1" method="post" enctype="multipart/form-data"> <!--이거 커밋해야됨-->
+                                
                                 <fieldset>
                                     <p id="selectedRating" class="rating-num">0.0</p>
                                     <input type="radio" name="reviewStar" value="5" id="rate1"><label for="rate1">★</label>
@@ -50,54 +51,52 @@
                                     <input type="radio" name="reviewStar" value="2" id="rate4"><label for="rate4">★</label>
                                     <input type="radio" name="reviewStar" value="1" id="rate5"><label for="rate5">★</label>
                                 </fieldset>
-                            </form>
-                            <script>
-                                const radioInputs = document.querySelectorAll('input[type="radio"]');
-                                const selectedRating = document.getElementById('selectedRating');
+                            
+                                <script>
+                                    const radioInputs = document.querySelectorAll('input[type="radio"]');
+                                    const selectedRating = document.getElementById('selectedRating');
 
-                                radioInputs.forEach((input) => {
-                                input.addEventListener('change', () => {
-                                    selectedRating.textContent = input.value + '.0';
-                                });
-                                });
-                            </script>
+                                    radioInputs.forEach((input) => {
+                                    input.addEventListener('change', () => {
+                                        selectedRating.textContent = input.value + '.0';
+                                    });
+                                    });
+                                </script>
                             </div>
                         </div>
                     </div>
                     
-                    
-                    <form action="/submit_review_post" method="post" enctype="multipart/form-data">  <!--이거 커밋해야됨-->
-                        <h3>키워드</h3><!--버튼 클릭 시 바뀌게 만들기-->
-                        <button type="button" class="btn-clicked">자세한 설명</button>
-                        <button type="button" class="btn-unclicked">핵심 위주</button>
-                        <button type="button" class="btn-unclicked">문제 풀이</button><br><Br>
-                    
-                    
-                        <h3>상세 리뷰</h3>
-                        <input type="text" id="title" name="reviewTitle" class="input-review-title" placeholder="리뷰의 제목을 입력해주세요">   <!--이거 커밋해야됨-->
-                        <textarea style="width: 100%;" rows="7" id="title" name="reviewContents" class="input-review-main" placeholder="상품에 대한 리뷰를 작성해주세요&#13;&#10;&#13;&#10;정확하고 중요한 정보인가요?&#13;&#10;체계적으로 정리되어 있나요?&#13;&#10;어떤 방향으로 도움이 되었나요?"></textarea>                 
-                        <!--글자수 카운트 만들기-->
-                        <!--사진 첨부-->
-                        <div class = "oneLine">
-                            <h3>사진 첨부</h3><br>
-                            <!--사진수에 따라서 숫자 올라가게 만들기-->
-                            <p>(선택) 0/5</p><br>
-                        </div>
-                            <form method="post" enctype="multipart/form-data">
-                                <div>
-                                    <label for="chooseFile" class="file-button">
-                                        add image<br>+
-                                    </label>
-                                </div>
+                    <h3>키워드</h3><!--버튼 클릭 시 바뀌게 만들기-->
+                    <button type="button" class="btn-clicked">자세한 설명</button>
+                    <button type="button" class="btn-unclicked">핵심 위주</button>
+                    <button type="button" class="btn-unclicked">문제 풀이</button><br><Br>
+                
+                
+                    <h3>상세 리뷰</h3>
+                    <input type="text" id="title" name="title" class="input-review-title" placeholder="리뷰의 제목을 입력해주세요">
+                    <textarea style="width: 100%;" rows="7" id="title" name="title" class="input-review-main" placeholder="상품에 대한 리뷰를 작성해주세요&#13;&#10;&#13;&#10;정확하고 중요한 정보인가요?&#13;&#10;체계적으로 정리되어 있나요?&#13;&#10;어떤 방향으로 도움이 되었나요?"></textarea>                 
+                    <!--글자수 카운트 만들기-->
+                    <!--사진 첨부-->
+                    <div class = "oneLine">
+                        <h3>사진 첨부</h3><br>
+                        <!--사진수에 따라서 숫자 올라가게 만들기-->
+                        <p>(선택) 0/5</p><br>
+                    </div>
+                        <form method="post" enctype="multipart/form-data">
+                            <div>
+                                <label for="chooseFile" class="file-button">
+                                    <p id="add-image">add image<br>+</p>
+                                </label>
+                            </div>
 
-                                <input type="file" id="chooseFile" name="chooseFile" accept="image/*" onchange="loadFile(this)">
-                            </form>
+                            <input type="file" id="chooseFile" name="chooseFile" accept="image/*" onchange="loadFile(this)">
+                        </form>
 
 
                         <!--제출 버튼-->
                         <input type="submit" value="등록" class="button btnDefaultblue btnFade" id="submit"> 
-                    
-                    </form>
+                </form>
             </main>            
-    </body>
+        </body>
+    {% endblock section %}
 </html>
