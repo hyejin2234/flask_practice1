@@ -89,19 +89,16 @@ class DBhandler:
 
 
 
-
-
-     #커밋
-    def reg_reveiw(self, data, img_path):
+    def reg_review(self, data, img_path):
         review_info ={
-            "title": data['reviewTitle'],
-            "review": data['reviewContents'],
+            "title": data['title'],
+            #"review": data['review'],
             "rate": data['reviewStar'],
-            "keyword": data[''], # keyword 정보 받아와야되는데... 어떻게?
+            #"keyword": data['keyword'],
             "img_path": img_path,
-            "reviewer": session['id']  # 리뷰작성한 유저정보 가지고 와야 되는데..얘는 어떻게 데려와?
+            #"reviewer": session['id']
         }
-        self.db.child("review").child(data['name']).child(session['id']).set(review_info)  #데이터베이스에 저장
+        self.db.child("review").child(data['name']).child(data['title']).set(review_info)  #데이터베이스에 저장
         return True
 
 

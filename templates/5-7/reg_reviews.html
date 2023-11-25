@@ -13,6 +13,7 @@
             {% include "index.html" %}
             <main class="padding" id="min_width_600">
                 <form class="mb-3" name="myform" id="myform" method="post" action="/reg_reviews" enctype="multipart/form-data">
+                    <input type="submit" value="등록" class="button btnDefaultblue btnFade" id="submit">
                     <div class="main-header">
                         <h1 class="main-header">리뷰 작성</h1> 
                         <div class="main-hr__padding"></div><br>
@@ -67,14 +68,14 @@
                     </div>
                     
                     <h3>키워드</h3><!--버튼 클릭 시 바뀌게 만들기-->
-                    <button type="button" class="btn-clicked">자세한 설명</button>
-                    <button type="button" class="btn-unclicked">핵심 위주</button>
-                    <button type="button" class="btn-unclicked">문제 풀이</button><br><Br>
+                    <button type="button" name="keyword" value="자세한 설명" class="btn-clicked">자세한 설명</button>
+                    <button type="button" name="keyword" value="핵심 위주" class="btn-unclicked">핵심 위주</button>
+                    <button type="button" name="keyword" value="문제 풀이" class="btn-unclicked">문제 풀이</button><br><Br>
                 
                 
                     <h3>상세 리뷰</h3>
                     <input type="text" id="title" name="title" class="input-review-title" placeholder="리뷰의 제목을 입력해주세요">
-                    <textarea style="width: 100%;" rows="7" id="title" name="title" class="input-review-main" placeholder="상품에 대한 리뷰를 작성해주세요&#13;&#10;&#13;&#10;정확하고 중요한 정보인가요?&#13;&#10;체계적으로 정리되어 있나요?&#13;&#10;어떤 방향으로 도움이 되었나요?"></textarea>                 
+                    <textarea style="width: 100%;" rows="7" id="title" name="review" class="input-review-main" placeholder="상품에 대한 리뷰를 작성해주세요&#13;&#10;&#13;&#10;정확하고 중요한 정보인가요?&#13;&#10;체계적으로 정리되어 있나요?&#13;&#10;어떤 방향으로 도움이 되었나요?"></textarea>                 
                     <!--글자수 카운트 만들기-->
                     <!--사진 첨부-->
                     <div class = "oneLine">
@@ -93,8 +94,8 @@
                         </form>
 
 
-                        <!--제출 버튼-->
-                        <input type="submit" value="등록" class="button btnDefaultblue btnFade" id="submit"> 
+                    <!--제출 버튼-->
+                    <input type="submit" value="등록" class="button btnDefaultblue btnFade" id="submit"> 
                 </form>
             </main>            
         </body>
