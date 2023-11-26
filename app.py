@@ -42,18 +42,23 @@ def view_order_confirmation():
 def view_reg_review():
     return render_template("5-7/reg_reviews.html")
 
-@application.route("/5-7/review_detail")
-def view_review_detail():
-    return render_template("5-7/review_detail.html")
+#@application.route("/5-7/review_detail")
+#def view_review_detail():
+#    return render_template("5-7/review_detail.html")
 
 
 #리뷰 데이터 넘겨줌
 @application.route("/reg_reviews", methods=['POST'])
 def reg_reviews():
-    image_file=request.files["chooseFile"]
-    image_file.save("static/img/{}".format(image_file.filename))
     data=request.form
-    DB.reg_review(data, image_file.filename)
+    user_id = session.get('id')
+    image_file = request.files["chooseFile"]
+    if image_file:
+        image_file.save("static/img/{}".format(image_file.filename))
+        DB.reg_review(data, user_id, image_file.filename)
+    else:
+        # image_file이 없는 경우에는 사진 빼고 등록
+        DB.reg_review(data, user_id, None)
     return redirect(url_for('view_all_review'))
 
 #리뷰작성화면
@@ -85,7 +90,7 @@ def view_all_review():
     row_count=int(per_page) #한페이지에 표시할 행 개수(6개)
     start_idx=per_page*page #현재페이지에 보여줄 리뷰의 시작인덱스
     end_idx=per_page*(page+1) #현재페이지에 보여줄 리뷰의 끝 인덱스
-    
+
     data = DB.get_all_reviews()
     #전체 리뷰의 개수 계산
     item_counts = len(data)
@@ -114,7 +119,7 @@ def view_review():
     end_idx=per_page*(page+1) #현재페이지에 보여줄 리뷰의 끝 인덱스
     data = DB.get_reviews(name)
     #전체 리뷰의 개수 계산
-    item_counts = len(data) 
+    item_counts = len(data)
     #현재 페이지에 보여줄 리뷰만 추출
     data = dict(list(data.items())[start_idx:end_idx])
     
@@ -127,21 +132,21 @@ def view_review():
                            row3=locals()['data_2'].items(), row4=locals()['data_3'].items(),row5=locals()['data_4'].items(), row6=locals()['data_5'].items(),
                            limit=per_page, page=page, page_count=int((item_counts/per_page)+1), total=item_counts)
 
-#커밋 리뷰상세페이지
+#리뷰상세페이지
 @application.route("/view_review_detail/<name>/")
-def view_review_detail():
+def view_review_detail(name):
     print("###name:",name)
     data = DB.get_item_byname(str(name))
     print("####data:",data)
-    return render_template("detail.html", name=name, data=data)
+    return render_template("review_detail.html", name=name, data=data)
 
 
 
 # 8~10
 #회원가입
-@application.route("/signup")
+@application.route("/8-10/signup")
 def signup():
-    return render_template("8~10/signup.html")
+    return render_template("8-10/signup.html")
 @application.route("/signup_post",methods=['POST'])
 def register_user():
     data=request.form
@@ -155,36 +160,36 @@ def register_user():
     if 'check_duplicate_id' in request.form:
         if DB.id_duplicate_check(id):
             flash('사용할 수 있는 아이디입니다.')
-            return render_template("8~10/signup.html")
+            return render_template("8-10/signup.html")
         else:
             flash('이미 존재하는 아이디입니다.')
-            return render_template("8~10/signup.html")
+            return render_template("8-10/signup.html")
 
     #닉네임중복확인
     if 'check_duplicate_nickname' in request.form:
         if DB.nickname_duplicate_check(nname):
             flash('사용할 수 있는 닉네임입니다.')
-            return render_template("8~10/signup.html")
+            return render_template("8-10/signup.html")
         else:
             flash('이미 존재하는 닉네임입니다.')
-            return render_template("8~10/signup.html")
+            return render_template("8-10/signup.html")
     if pw!=pw2:
         flash("비밀번호를 확인해주세요")
-        return render_template("8~10/signup.html")
+        return render_template("8-10/signup.html")
     else:
         if DB.insert_user(data,pw_hash,pw_hash2):
             flash("회원가입되었습니다.")
-            return render_template("8~10/login.html")
+            return render_template("8-10/login.html")
         else:
             flash("중복확인를 눌러주세요")
-            return render_template("8~10/signup.html")
+            return render_template("8-10/signup.html")
 
     
 
 # 로그인 하기
-@application.route("/login")
+@application.route("/8-10/login")
 def login():
-    return render_template("8~10/login.html")
+    return render_template("/8-10/login.html")
 @application.route("/login_confirm", methods=['POST'])
 def login_user():
     id_=request.form['id']
@@ -195,7 +200,7 @@ def login_user():
         return redirect(url_for('hello')) #나중에 전체상품조회로 바꿀예정
     else:
         flash("Wrong ID or PW!")
-        return render_template("8~10/login.html")
+        return render_template("8-10/login.html")
 
 # 로그아웃
 @application.route("/logout")

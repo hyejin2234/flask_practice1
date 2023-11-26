@@ -92,44 +92,44 @@ class DBhandler:
     ## 이 밑으로 쭉 다 내꺼
     
     #데이터베이스에 저장
-    def reg_review(self, data, img_path):
+    def reg_review(self, data, user_id, img_path):
         review_info ={
             "name": data['name'],
             "title": data['title'],
-            #"review": data['review'],
+            "review": data['review'],
             "rate": data['reviewStar'],
             #"keyword": data['keyword'],
             "img_path": img_path,
-            "reviewer": session['id']
+            "reviewer": user_id 
         }
-        name_id = data['name'] + '_' + session['id']
+        name_id = data['name'] + '_' + user_id
         self.db.child("review").child(name_id).set(review_info)
         return True
 
 
     #상품별 리뷰 불러오기
     def get_reviews(self, target_name):
-        all_review = self.db.child("review").get().val()
+        all_review = self.db.child("review").get().val() #전체리뷰
         target_reviews = {}
-        
-        for review in all_review.each():
-            name = all_review.child("name").get()
+
+        for review in all_review.each():                #각 리뷰에 대해 반복
+            name = review.child("name").get().val()       #각 리뷰에 name value 추출
             if name == target_name:
                 target_reviews[review.key()] = review.val()
-    
+
         return target_reviews
 
     #전체리뷰불러오기
     def get_all_reviews(self):
         all_reviews = self.db.child("review").get().val() 
         return all_reviews
-    
-    #커밋
+
+    #이름으로 리뷰 불러오기
     def get_item_byname(self, name):
-        items = self.db.child("item").get()
+        reviews = self.db.child("review").get()
         target_value=""
         print("###########",name)
-        for res in items.each():
+        for res in reviews.each():
             key_value = res.key()
             if key_value == name:
                 target_value=res.val()
