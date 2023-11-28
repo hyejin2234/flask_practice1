@@ -98,7 +98,7 @@ class DBhandler:
             "title": data['title'],
             "review": data['review'],
             "rate": data['reviewStar'],
-            #"keyword": data['keyword'],
+            "keyword": data['keyword'],
             "img_path": img_path,
             "reviewer": user_id 
         }

@@ -137,7 +137,9 @@ def view_review():
     average_star = total_star/item_counts
     
     #각 키워드에 개수 구해서 %계산
-    keyword1=0, keyword2=0, keyword3=0
+    keyword1=0
+    keyword2=0
+    keyword3=0
     for i in data.values():
         if i.get('keyword')=='자세한설명':
             keyword1 =  keyword1+1

@@ -12,8 +12,7 @@
         <body>
             {% include "index.html" %}
             <main class="padding" id="min_width_600">
-                <form class="mb-3" name="myform" id="myform" method="post" action="/reg_reviews" enctype="multipart/form-data">
-                    <input type="submit" value="등록" class="button btnDefaultblue btnFade" id="submit">
+                <form class="mb-3" name="myform" method="post" action="/reg_reviews" enctype="multipart/form-data">
                     <div class="main-header">
                         <h1 class="main-header">리뷰 작성</h1> 
                         <div class="main-hr__padding"></div><br>
@@ -43,16 +42,16 @@
                             </div>
                         
                             <div class="box right">
-                                
-                                <fieldset>
-                                    <p id="selectedRating" class="rating-num">0.0</p>
-                                    <input type="radio" name="reviewStar" value="5" id="rate1"><label for="rate1">★</label>
-                                    <input type="radio" name="reviewStar" value="4" id="rate2"><label for="rate2">★</label>
-                                    <input type="radio" name="reviewStar" value="3" id="rate3"><label for="rate3">★</label>
-                                    <input type="radio" name="reviewStar" value="2" id="rate4"><label for="rate4">★</label>
-                                    <input type="radio" name="reviewStar" value="1" id="rate5"><label for="rate5">★</label>
-                                </fieldset>
-                            
+                                <div id="myform">
+                                    <fieldset>
+                                        <p id="selectedRating" class="rating-num">0.0</p>
+                                        <input type="radio" name="reviewStar" value="5" id="rate1"><label for="rate1">★</label>
+                                        <input type="radio" name="reviewStar" value="4" id="rate2"><label for="rate2">★</label>
+                                        <input type="radio" name="reviewStar" value="3" id="rate3"><label for="rate3">★</label>
+                                        <input type="radio" name="reviewStar" value="2" id="rate4"><label for="rate4">★</label>
+                                        <input type="radio" name="reviewStar" value="1" id="rate5"><label for="rate5">★</label>
+                                    </fieldset>
+                                </div>
                                 <script>
                                     const radioInputs = document.querySelectorAll('input[type="radio"]');
                                     const selectedRating = document.getElementById('selectedRating');
@@ -67,11 +66,39 @@
                         </div>
                     </div>
                     
-                    <h3>키워드</h3><!--버튼 클릭 시 바뀌게 만들기-->
-                    <button type="button" name="keyword" value="자세한 설명" class="btn-clicked">자세한 설명</button>
-                    <button type="button" name="keyword" value="핵심 위주" class="btn-unclicked">핵심 위주</button>
-                    <button type="button" name="keyword" value="문제 풀이" class="btn-unclicked">문제 풀이</button><br><Br>
-                
+                    <h3>키워드</h3>
+
+                    <div class="keyword">
+                        <label for="자세한설명">자세한 설명
+                            <input type="radio" name="keyword" id="자세한설명" value="자세한설명" style="display: none;">
+                        </label>
+                        &nbsp;
+                        <label for="핵심위주">핵심 위주
+                            <input type="radio" name="keyword" id="핵심위주"value="핵심 위주" style="display: none;">
+                        </label>&nbsp;
+                        <label for="문제풀이">문제 풀이
+                            <input type="radio" name="keyword" id="문제풀이"value="문제 풀이" style="display: none;">
+                        </label>
+                    </div>
+                    <script>
+                        // JavaScript를 사용하여 라디오 버튼이 선택될 때 스타일 변경
+                        const radioButtons = document.querySelectorAll('.keyword input[type="radio"]');
+                        
+                        radioButtons.forEach((radioButton) => {
+                          radioButton.addEventListener('change', () => {
+                            // 모든 라벨에서 스타일 제거
+                            document.querySelectorAll('.keyword label').forEach((label) => {
+                              label.style.backgroundColor = '';
+                              label.style.color = '';
+                            });
+                      
+                            // 선택된 라벨에 스타일 적용
+                            const selectedLabel = document.querySelector(`label[for="${radioButton.id}"]`);
+                            selectedLabel.style.backgroundColor = '#00AFB9';
+                            selectedLabel.style.color = '#ffffff';
+                          });
+                        });
+                      </script> 
                 
                     <h3>상세 리뷰</h3>
                     <input type="text" id="title" name="title" class="input-review-title" placeholder="리뷰의 제목을 입력해주세요">
@@ -83,19 +110,16 @@
                         <!--사진수에 따라서 숫자 올라가게 만들기-->
                         <p>(선택) 0/5</p><br>
                     </div>
-                        <form method="post" enctype="multipart/form-data">
-                            <div>
-                                <label for="chooseFile" class="file-button">
-                                    <p id="add-image">add image<br>+</p>
-                                </label>
-                            </div>
+                    <div>
+                        <label for="chooseFile" class="file-button">
+                            <p id="add-image">add image<br>+</p>
+                        </label>
+                    </div>
 
-                            <input type="file" id="chooseFile" name="chooseFile" accept="image/*" onchange="loadFile(this)">
-                        </form>
+                    <input type="file" id="chooseFile" name="chooseFile" accept="image/*" onchange="loadFile(this)">
 
-
-                    <!--제출 버튼-->
-                    <input type="submit" value="등록" class="button btnDefaultblue btnFade" id="submit"> 
+                <!--제출 버튼-->
+                <input type="submit" value="등록" class="button btnDefaultblue btnFade" id="submit"> 
                 </form>
             </main>            
         </body>
