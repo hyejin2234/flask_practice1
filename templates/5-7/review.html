@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+    
     <head>
         <meta charset="UTF-8">
         <title>상품등록</title>
@@ -8,9 +9,9 @@
     </head>
 
     <body>
-        {% include 'header-and-nav.html' %}
-
-        <main class="padding">
+        {% extends 'index.html' %}
+        {% block section %}
+        <main class="padding" id="min_width_600">
             <!--페이지 정보-->
             <div class="main-header-left">
                 <div class="oneLine">
@@ -109,15 +110,19 @@
             <div class="main-hr__padding" style="background-color: #BCBCBC;"></div>
             <!--리뷰 보기-->
             <article style="padding-inline-start: 5%; padding-inline-end: 5%;">
-                {% include '5-7/individual_review.html' %}
+                
+
+                <!--
+                {% include '5~7/individual_review.html' %}
                 <div class="main-hr__padding" style="background-color: #BCBCBC;"></div>
-                {% include '5-7/individual_review.html' %}
+                {% include '5~7/individual_review.html' %}
                 <div class="main-hr__padding" style="background-color: #BCBCBC;"></div>
-                {% include '5-7/individual_review.html' %}
+                {% include '5~7/individual_review.html' %}
                 <div class="main-hr__padding" style="background-color: #BCBCBC;"></div>
-                {% include '5-7/individual_review.html' %}
+                {% include '5~7/individual_review.html' %}
                 <div class="main-hr__padding" style="background-color: #BCBCBC;"></div>
-                {% include '5-7/individual_review.html' %}
+                {% include '5~7/individual_review.html' %}
+                -->
             </article>
             <!--페이지 선택 창-->
             <ul class="pagination">
@@ -131,5 +136,6 @@
             </ul>
             
         </main>
-    </body>
+        {% endblock section %}
+    </body>   
 </html>

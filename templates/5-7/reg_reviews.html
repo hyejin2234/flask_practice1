@@ -1,6 +1,6 @@
 <!DOCTYPE html>
     <html>
-        {% block section %}
+        
         <head>
             <meta charset="UTF-8">
             <title>리뷰작성화면</title>
@@ -10,7 +10,8 @@
         </head>
         
         <body>
-            {% include "index.html" %}
+            {% extends "index.html" %}
+            {% block section %}
             <main class="padding" id="min_width_600">
                 <form class="mb-3" name="myform" method="post" action="/reg_reviews" enctype="multipart/form-data">
                     <div class="main-header">
@@ -74,13 +75,13 @@
                         </label>
                         &nbsp;
                         <label for="핵심위주">핵심 위주
-                            <input type="radio" name="keyword" id="핵심위주"value="핵심 위주" style="display: none;">
+                            <input type="radio" name="keyword" id="핵심위주" value="핵심 위주" style="display: none;">
                         </label>&nbsp;
                         <label for="문제풀이">문제 풀이
-                            <input type="radio" name="keyword" id="문제풀이"value="문제 풀이" style="display: none;">
+                            <input type="radio" name="keyword" id="문제풀이" value="문제 풀이" style="display: none;">
                         </label>
                     </div>
-                    <script>
+                    <script>//버튼 클릭할 때 색 변하게 하는 js
                         // JavaScript를 사용하여 라디오 버튼이 선택될 때 스타일 변경
                         const radioButtons = document.querySelectorAll('.keyword input[type="radio"]');
                         
@@ -121,7 +122,8 @@
                 <!--제출 버튼-->
                 <input type="submit" value="등록" class="button btnDefaultblue btnFade" id="submit"> 
                 </form>
-            </main>            
+            </main>
+            {% endblock section %}
         </body>
-    {% endblock section %}
+    
 </html>

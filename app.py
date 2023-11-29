@@ -10,31 +10,102 @@ DB=DBhandler() #database.py에 들어가면 클래스있음 (DB. 이용)
 def hello():
     return render_template("index.html")
 
+@application.route("/index")
+def comback_home():
+    return render_template("index.html")
+
 # 1~4
 @application.route("/1~4/item_reg")
 def view_reg_items():
-    return render_template("1~4/item_reg.html")
+    if 'id' not in session or not session['id']:
+            flash('상품을 등록하려면 로그인을 해주세요.')
+            return redirect(url_for('login'))
+    else:
+            return render_template("1~4/item_reg.html")
 
+# item_reg.html에서 입력한 값 get하기
+@application.route("/submit_item")
+def reg_item_submit():
+    item_name=request.args.get("item-name")
+    item_type=request.args.get("item-type")
+    price=request.args.get("price")
+
+    #print(item_name, item_type, price)
+
+
+# item_reg.html에서 입력한 값 db에 저장하고 결과 화면으로 넘겨주기
+@application.route("/submit_item_post", methods=['POST'])
+def reg_item_submit_post():
+
+    if 'id' not in session or not session['id']:
+        flash('리뷰를 작성하려면 로그인을 해주세요.')
+        return redirect(url_for('login'))
+    else:
+        item_file=request.files['item_upload']
+        item_file.save("static/items/{}".format(item_file.filename))
+        photo_file=request.files['photo_upload']
+        photo_file.save("static/photos/{}".format(photo_file.filename))
+
+        data=request.form
+        writer = session['id']
+    
+        DB.insert_item(data['item_name'], data, item_file.filename, photo_file.filename, session['id'])
+        print( 'after db insertion' )
+
+        return render_template("1~4/item_detail.html", data=data, item_path="static/items/{}".format(item_file.filename), photo_path="static/photos/{}".format(photo_file.filename))
+
+
+#### 맨 처음 화면이 이 view_items()함수로 옴.
 @application.route("/1~4/view_item")
 def view_items():
-    return render_template("1~4/view_item.html")
+    page = request.args.get("page", 0, type=int)
+    per_page=5 # item count to display per page
+    per_row=1 # item count to display per row
+    row_count=int(per_page/per_row)
+    start_idx=per_page*page
+    end_idx=per_page*(page+1)
 
-@application.route("/1~4/item_detail")
-def view_item_detail():
-    return render_template("1~4/item_detail.html")
+    data = DB.get_items()
+    item_counts = len(data)
+    data = dict(list(data.items())[start_idx:end_idx])
+    tot_count = len(data)
+
+    for i in range(row_count): #last row
+        if (i == row_count-1) and (tot_count%per_row != 0):
+            locals()['data_{}'.format(i)] = dict(list(data.items())[i*per_row:])
+        else: 
+            locals()['data_{}'.format(i)] = dict(list(data.items())[i*per_row:(i+1)*per_row])
+
+    return render_template("1~4/view_item.html", datas=data.items(), row1=locals()['data_0'].items(), row2=locals()['data_1'].items(), limit=per_page, page=page, page_count=int((item_counts/per_page) +1), total = tot_count)
+
+
+#전체 리스트에서 상품 클릭 시 세부정보 볼 수 있음
+@application.route("/1~4/view_item_detail/<item_name>/")
+def view_item_detail(item_name):
+    print("###name:", item_name)
+    data=DB.get_item_byname(str(item_name))
+    print("####data:",data)
+    return render_template("1~4/detail.html", item_name=item_name, data=data)
+
+
 
 @application.route("/1~4/order")
-def view_item_detai():
+def order():
     return render_template("1~4/order.html")
 
-@application.route("/order_item")
-def view_order_confirmation():
-    #구매한후 구매자 포인트 감소
+#구매하기 버튼 누르면
+@application.route("/order_item/<name>")
+def view_order_confirmation(name):
+    
     flash('1000포인트가 차감되었습니다')
-    DB.update_point(session['id'], 1000)
-    DB.update_ranking_point(session['id'], 1000)
-    return render_template("1~4/4.html")
-
+    point=DB.get_price(str(name))
+    seller=DB.get_seller(str(name))
+    DB.update_point(session['id'], point) #구매자 포인트 감소
+    DB.update_ranking_point(session['id'], point) #구매자 랭킹 포인트 증가
+    DB.update_point_2(seller,point) #판매자 포인트 증가
+    DB.update_ranking_point(seller,point) #판매자 랭킹 포인트 증가
+    session['user_point'] = DB.get_user_point(session['id'])
+    return render_template("1~4/order.html")
 
 
 # 5~7
@@ -76,11 +147,13 @@ def reg_review_init(name):
         info = DB.reference('item')
         info_data = info.child(name).get()
         #판매자정보추가
+        item_name = info_data.get("item_name",None)
         professor = info_data.get("professor",None)
-        subject = info_data.get("subject",None)
+        subject = info_data.get("course_number",None)
         subject_id = info_data.get("subject_id",None)
+        writer = info_data.get("writer",None)
         reviewer = session['id']
-        return render_template("5-7/reg_reviews.html", reviewer=reviewer, name=name, subject=subject, professor=professor, subject_id=subject_id)
+        return render_template("5-7/reg_reviews.html", writer=writer, item_name = item_name, reviewer=reviewer, subject=subject, professor=professor, subject_id=subject_id)
 
 
 ## 이거 커밋!  ## 상품명 가져와서 그 상품에 대한 리뷰만 추출
@@ -238,17 +311,36 @@ def login_user():
 def logout_user():
     session.clear()
     return redirect(url_for('hello')) #나중에 전체상품조회로 바꿀예정
+
+
+#랭킹
+@application.route("/ranking")
+def ranking():
+    per_page=int(10) 
+    per_row=int (1) 
+
+    data = DB.get_points()
+    item_counts = len(data)
+
+    if 'id' in session:
+        user_id = session['id']  
+        user_ranking_point=DB.get_user_ranking_point(user_id)
+    else: 
+        user_ranking_point=0
     
 
+    locals()['data_{}'.format(0)] = dict(list(data.items())[0*per_row:])
 
+    return render_template(
+            "8~10/ranking.html",
+            datas=data.items(),
+            row=locals()['data_0'].items(),
+            limit=per_page,
+            page=1,
+            page_count=1,
+            total=item_counts,
+            user_rankingpoint=user_ranking_point)
 
-    ################
-@application.route("/submit_item_post",methods=['POST'])
-def reg_item_submit_post():
-    image_file=request.files["file"]
-    image_file.save("static/images/{}".format(image_file.filename))
-    data = request.form
-    return render_template("submit_item_result.html", data=data, img_path="static/images/{}".format(image_file.filename))
 
 if __name__ == "__main__":
     application.run(host='0.0.0.0', debug = True)

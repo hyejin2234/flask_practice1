@@ -6,14 +6,14 @@
             <div>
                 <div class="rowcontainer">
                     <!--백: 리뷰 제목 불러오기-->
-                    <div class="review-title">리뷰 제목</div>
+                    <div class="review-title">{{ review_info.title }}</div>
                     <!--백: 리뷰 작성 날짜 불러오기-->
                 </div>
                 <div class="rowcontainer" id="profile-rowcontainer">
-                    <!--백: 작성자 프로필 사진 불러오기-->
+                    <!--프로필 사진-->
                     <div class="review-profile"><img src="../../static/img/profile.jpg" width=100% height=100% alt="상품 예시 사진입니다"></div>
                     <!--백: 작성자 아이디 앞 3글자만 보이게 불러오기-->
-                    <div class="review-id">ki*****</div>
+                    <div class="review-id">{{ review_info.reviewer|slice(3) }}{{ '*' * (review_info.reviewer|length - 3) }}</div>
                     <!--백: 작성자 전공 불러오기-->
                     <div class="review-major">(컴퓨터공학과)</div>
                     <div class="review-hr"></div>
