@@ -109,14 +109,14 @@ class DBhandler:
     
     #데이터베이스에 저장
     def reg_review(self, data, user_id, img_path):
-        find_name = data['seller_id']+"_"+data['name']
+        find_name = data['seller_id']+"_"+data['name'] #find_name=판매자id_상품명
         dbname = self.db.child("item").get() #db에 저장되어 있는 판매자id_상품명 찾기.
         for res in dbname.each():
             key_value = res.key() #판매자id_상품명
             if key_value == find_name:
                 target_value=res.val() #내가 찾던 판매자id_상품명
         review_info ={
-            "name": data['name'], #상품명
+            "name": find_name, #판매자id_상품명
             "title": data['title'],
             "review": data['review'],
             "rate": data['reviewStar'],
@@ -124,7 +124,7 @@ class DBhandler:
             "img_path": img_path,
             "reviewer": user_id
         }
-        name_id = target_value + '_' + user_id #판매자id_상품명_구매자id
+        name_id = find_name + '_' + user_id #판매자id_상품명_구매자id
         self.db.child("review").child(name_id).set(review_info)
         return True
 
@@ -147,14 +147,24 @@ class DBhandler:
         return all_reviews
 
     #이름으로 리뷰 불러오기
-    def get_item_byname(self, name):
+    def get_review_byname(self, name):                #name=판매자id_상품명
         reviews = self.db.child("review").get()
         target_value=""
         print("###########",name)
-        for res in reviews.each():
-            key_value = res.key()
-            if key_value == name:
-                target_value=res.val()
+        for res in reviews.each():                 #각 리뷰마다 반복
+            value = res.child("name").get().val()  #value = 리뷰내의 "name"(=판매자id_상품명)
+            if value == name:                      #value = name 일때
+                target_value=res.val()             #그 리뷰반환
         return target_value
+
+
+    #구매내역 불러오기
+    def get_purchase(self, user_id):
+        purchase = self.db.child("user_purchase").get().val() #각 유저의 구매내역
+
+        for id, purchase_items in purchase.items(): #각 리뷰에 대해 반복
+            if id == user_id:                       #key값이 사용자 id와 같으면 그 구매내역 반환
+                return purchase_items
+        return None                                 #구매내역이 없는 경우
 
 

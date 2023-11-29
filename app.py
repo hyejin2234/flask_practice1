@@ -108,14 +108,36 @@ def view_order_confirmation(name):
     return render_template("1~4/order.html")
 
 
-# 5~7
+# 5~7자신이 구입한 상품들 쭉 나오게,,
 @application.route("/5-7/reg_reviews")
 def view_reg_review():
     if 'id' not in session or not session['id']:
         flash('리뷰를 작성하려면 로그인을 해주세요.')
         return redirect(url_for('login'))
     else:
-        return render_template("5-7/reg_reviews.html")
+        #return render_template("/5-7/reg_reviews.html")
+        page = request.args.get("page", 0, type=int)
+        per_page=6
+        per_row=1
+        row_count=int(per_page)
+        start_idx=per_page*page
+        end_idx=per_page*(page+1)
+
+        user_id = session.get('id')
+        purchase = DB.get_purchase(user_id)        #구매내역 불러오기
+        #if purchase == None:
+            #구매내역이 없는 경우에는 어떻게 할 것인가?
+        item_counts = len(purchase)
+        purchase = dict(list(purchase.items())[start_idx:end_idx])
+        tot_count = len(purchase)
+        for i in range(row_count):
+            if (i == row_count-1):
+                locals()['data_{}'.format(i)] = dict(list(purchase.items())[i*per_row:])
+            else:
+                locals()['data_{}'.format(i)] = dict(list(purchase.items())[i*per_row:(i+1)*per_row])
+        return render_template("/5-7/구매내역페이지.html", purchase=purchase.items(), row1=locals()['data_0'].items(), row2=locals()['data_1'].items(),
+                           row3=locals()['data_2'].items(), row4=locals()['data_3'].items(),row5=locals()['data_4'].items(), row6=locals()['data_5'].items(),
+                           limit=per_page, page=page, page_count=int((item_counts/per_page)+1), total=item_counts)
 
 
 #@application.route("/5-7/review_detail")
@@ -137,6 +159,7 @@ def reg_reviews():
         DB.reg_review(data, user_id, None)
     return redirect(url_for('view_all_review'))
 
+
 #리뷰작성화면
 @application.route("/reg_review_init/<name>/")
 def reg_review_init(name):
@@ -146,7 +169,6 @@ def reg_review_init(name):
     else:
         info = DB.reference('item')
         info_data = info.child(name).get()
-        #판매자정보추가
         item_name = info_data.get("item_name",None)
         professor = info_data.get("professor",None)
         subject = info_data.get("course_number",None)
@@ -192,7 +214,7 @@ def view_all_review():
 
 
 ##상픔별 리뷰화면 -> 상품상세화면에서 리뷰보기 클릭하면 나오는 걸로
-@application.route("/review/<name>/")
+@application.route("/review/<name>/")      #name=판매자id_상품명
 def view_review():
     page = request.args.get("page", 0, type=int)
     per_page=6 # 한페이지에 리뷰 6개
@@ -240,7 +262,7 @@ def view_review():
 @application.route("/view_review_detail/<name>/")
 def view_review_detail(name):
     print("###name:",name)
-    data = DB.get_item_byname(str(name))
+    data = DB.get_review_byname(str(name)) #name이 판매자id_상품명이어야함
     print("####data:",data)
     return render_template("review_detail.html", name=name, data=data)
 
