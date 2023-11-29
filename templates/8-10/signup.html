@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -24,18 +24,19 @@
     </div>
 
     <div class="outer">
-        <form method="post" action="/signup_post">
+        <form method="post" action="/signup_post" enctype="multipart/form-data">
             <div class="signup-inner">
                 <p class="warning-msg">*은 필수</p>
                 <table style="height: 300px;">
                     <tr>
                         <th>*아이디</th>
-                        <td><input type="text" required id="ID" name="ID" placeholder="영문/숫자 조합" /></td>
-                        <td><button class="중복체크">중복확인</button></td>
+                        <td><input type="text" required id="id" name="id" /></td>
+                        <td><button name="check_duplicate_id" class="중복체크" onclick="IDcheck()">중복확인</button></td>
+                        <td><p class="warning-msg" id="idcheck_msg">아이디 중복확인을 해주세요</p></td>
                     </tr>
                     <tr>
                         <th>*비밀번호</th>
-                        <td><input type="password" required id="PW" name="PW" placeholder="영문/숫자 조합 8~16자" /></td>
+                        <td><input type="password" required id="pw" name="pw" /></td>
                     </tr>
                     <tr>
                         <th>*비밀번호 확인</th>
@@ -52,7 +53,7 @@
                     <tr>
                         <th>대학 / 학과</th>
                         <td>
-                            <select id="dropdown1" style="width:100%;">
+                            <select id="dropdown1" name="dropdown1" style="width:100%;">
                                 <option value="인문과학대학">인문과학대학</option>
                                 <option value="사회과학대학">사회과학대학</option>
                                 <option value="자연과학대학">자연과학대학</option>
@@ -70,7 +71,7 @@
                             </select>
                         </td>
                         <td>
-                            <select id="dropdown2" style="width:172px;">
+                            <select id="dropdown2" name="dropdown2" style="width:172px;">
                                 <option value="국어국문학과">국어국문학과</option>
                                 <option value="중어중문학과">중어중문학과</option>
                                 <option value="불어불문학과">불어불문학과</option>
@@ -85,21 +86,70 @@
                     <tr>
                         <th>*닉네임</th>
                         <td>
-                            <input type="text" required id="name" name="name" />
-                        </td>
-                        <td>
-                            <button class="중복체크">중복확인</button>
-                        </td>
+                            <input type="text" required id="nickname" name="nickname" />
+                        </td>                     
+                        <td><button name="check_duplicate_nickname" class="중복체크" onclick="nicknamecheck()">중복확인</button></td>
+                        <td><p class="warning-msg" id="nickname_msg">닉네임 중복확인을 해주세요</p></td>                     
                     </tr>
                 </table>
             </div><br><br>
             <div>
-                <button class="btnFade btnDefaultblue" id="signup-btn"><b>가입하기</b></button>
+                <input type="submit" class="btnFade btnDefaultblue" id="signup-btn" value="가입하기"><b></b>
             </div>
 
         </form>
     </div>
     {% endblock section %}
+
+    <script>
+        function IDcheck() {
+            var enteredId = document.getElementById('id').value;
+            var warningMsgElement = document.querySelector('#idcheck_msg');
+
+            if (enteredId.trim() === '') {
+                warningMsgElement.textContent = '아이디를 입력하세요.';
+            } else {
+                // 중복 확인 함수 (임의의 함수, 실제로는 서버와 통신하여 확인해야 함)
+                var idDuplicate = isIdDuplicate(enteredId);
+
+                if (idDuplicate) { //true
+                    warningMsgElement.textContent = '이미 사용중인 아이디입니다.';
+                } else { //false
+                    warningMsgElement.textContent = '사용 가능한 아이디입니다.';
+                }
+            }
+        }
+
+        // 임의의 중복 확인 함수 (실제로는 서버와 통신하여 확인해야 함)
+        function isIdDuplicate(id) {
+
+            return true; //리턴값 true/false 백에서 받아옴
+        }
+
+        function nicknamecheck() {
+            var enteredNickname = document.getElementById('nickname').value;
+            var nicknameMsgElement = document.getElementById('nickname_msg');
+
+            if (enteredNickname.trim() === '') {
+                nicknameMsgElement.textContent = '닉네임을 입력하세요.';
+            } else {
+                // 중복 확인 함수 (임의의 함수, 실제로는 서버와 통신하여 확인해야 함)
+                var isDuplicateNickname = isNicknameDuplicate(enteredNickname);
+
+                if (isDuplicateNickname) {
+                    nicknameMsgElement.textContent = '이미 사용중인 닉네임입니다.';
+                } else {
+                    nicknameMsgElement.textContent = '사용 가능한 닉네임입니다.';
+                }
+            }
+        }
+
+        // 임의의 중복 확인 함수 (실제로는 서버와 통신하여 확인해야 함)
+        function isNicknameDuplicate(nickname) {
+
+            return true; //리턴값 true/false 백에서 받아옴
+        }
+    </script>
 
 </body>
 </html>
