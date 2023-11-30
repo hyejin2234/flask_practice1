@@ -110,11 +110,9 @@ class DBhandler:
     #데이터베이스에 저장
     def reg_review(self, data, user_id, img_path):
         find_name = data['seller_id']+"_"+data['name'] #find_name=판매자id_상품명
-        dbname = self.db.child("item").get() #db에 저장되어 있는 판매자id_상품명 찾기.
-        for res in dbname.each():
-            key_value = res.key() #판매자id_상품명
-            if key_value == find_name:
-                target_value=res.val() #내가 찾던 판매자id_상품명
+        dbname = self.db.child("user").child(user_id).get() #db에 저장되어 있는 판매자id_상품명 찾기.
+        college = dbname.val().get("college") #리뷰작성하는 유저의 대학 가지고옴 
+        major = dbname.val().get("major")
         review_info ={
             "name": find_name, #판매자id_상품명
             "title": data['title'],
@@ -122,14 +120,16 @@ class DBhandler:
             "rate": data['reviewStar'],
             "keyword": data['keyword'],
             "img_path": img_path,
-            "reviewer": user_id
+            "reviewer": user_id,
+            "reviewer_college": college,
+            "reviewer_major": major
         }
         name_id = find_name + '_' + user_id #판매자id_상품명_구매자id
         self.db.child("review").child(name_id).set(review_info)
         return True
 
 
-    #상품별 리뷰 불러오기
+    #상품별 리뷰 불러오기(상품별 리뷰화면)
     def get_reviews(self, target_name):
         all_review = self.db.child("review").get().val() #전체리뷰
         target_reviews = {}
@@ -140,13 +140,42 @@ class DBhandler:
                 target_reviews[review.key()] = review.val()
 
         return target_reviews
+    
+    #상품별 리뷰 카테고리별로 불러오기(대학별 정렬)
+    def get_reviews_bycategory(self,target_name, cate):
+        all_review = self.db.child("review").get().val() #전체리뷰
+        target_reviews = {}
 
+        for review in all_review.each():                  #각 리뷰에 대해 반복
+            name = review.child("name").get().val()       #각 리뷰에 name value 추출
+            if name == target_name:
+                target_reviews[review.key()] = review.val() #target_reviews = 특정 상품에 대한 리뷰들
+                
+        reviews = target_reviews.get()
+        target_value=[]
+        target_key=[]
+        for res in reviews.each():
+            value = res.val()
+            key_value = res.key()
+            
+            if value['reviewer_college'] == cate:
+                target_value.append(value)
+                target_key.append(key_value)
+        print("######target_value",target_value)
+        new_dict={}
+        
+        for k,v in zip(target_key,target_value):
+            new_dict[k]=v
+            
+        return new_dict
+    
+    
     #전체리뷰불러오기
     def get_all_reviews(self):
         all_reviews = self.db.child("review").get().val() 
         return all_reviews
 
-    #이름으로 리뷰 불러오기
+    #이름으로 리뷰 불러오기(상세리뷰화면)
     def get_review_byname(self, name):                #name=판매자id_상품명
         reviews = self.db.child("review").get()
         target_value=""
