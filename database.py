@@ -171,9 +171,9 @@ class DBhandler:
     
     
     #전체리뷰불러오기
-    def get_all_reviews(self):
-        all_reviews = self.db.child("review").get().val() 
-        return all_reviews
+    # def get_all_reviews(self):
+    #     all_reviews = self.db.child("review").get().val() 
+    #     return all_reviews
 
     #이름으로 리뷰 불러오기(상세리뷰화면)
     def get_review_byname(self, name):                #name=판매자id_상품명
