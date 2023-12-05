@@ -15,13 +15,13 @@ def comback_home():
     return render_template("index.html")
 
 # 1~4
-@application.route("/1~4/item_reg")
+@application.route("/1-4/item_reg")
 def view_reg_items():
     if 'id' not in session or not session['id']:
             flash('상품을 등록하려면 로그인을 해주세요.')
             return redirect(url_for('login'))
     else:
-            return render_template("1~4/item_reg.html")
+            return render_template("1-4/item_reg.html")
 
 # item_reg.html에서 입력한 값 get하기
 @application.route("/submit_item")
@@ -52,11 +52,11 @@ def reg_item_submit_post():
         DB.insert_item(data['item_name'], data, item_file.filename, photo_file.filename, session['id'])
         print( 'after db insertion' )
 
-        return render_template("1~4/item_detail.html", data=data, item_path="static/items/{}".format(item_file.filename), photo_path="static/photos/{}".format(photo_file.filename))
+        return render_template("1-4/item_detail.html", data=data, item_path="static/items/{}".format(item_file.filename), photo_path="static/photos/{}".format(photo_file.filename))
 
 
 #### 맨 처음 화면이 이 view_items()함수로 옴.
-@application.route("/1~4/view_item")
+@application.route("/1-4/view_item")
 def view_items():
     page = request.args.get("page", 0, type=int)
     per_page=5 # item count to display per page
@@ -76,22 +76,22 @@ def view_items():
         else: 
             locals()['data_{}'.format(i)] = dict(list(data.items())[i*per_row:(i+1)*per_row])
 
-    return render_template("1~4/view_item.html", datas=data.items(), row1=locals()['data_0'].items(), row2=locals()['data_1'].items(), limit=per_page, page=page, page_count=int((item_counts/per_page) +1), total = tot_count)
+    return render_template("1-4/view_item.html", datas=data.items(), row1=locals()['data_0'].items(), row2=locals()['data_1'].items(), limit=per_page, page=page, page_count=int((item_counts/per_page) +1), total = tot_count)
 
 
 #전체 리스트에서 상품 클릭 시 세부정보 볼 수 있음
-@application.route("/1~4/view_item_detail/<item_name>/")
+@application.route("/1-4/view_item_detail/<item_name>/")
 def view_item_detail(item_name):
     print("###name:", item_name)
     data=DB.get_item_byname(str(item_name))
     print("####data:",data)
-    return render_template("1~4/detail.html", item_name=item_name, data=data)
+    return render_template("1-4/detail.html", item_name=item_name, data=data)
 
 
 
-@application.route("/1~4/order")
+@application.route("/1-4/order")
 def order():
-    return render_template("1~4/order.html")
+    return render_template("1-4/order.html")
 
 #구매하기 버튼 누르면
 @application.route("/order_item/<name>")
@@ -105,7 +105,7 @@ def view_order_confirmation(name):
     DB.update_point_2(seller,point) #판매자 포인트 증가
     DB.update_ranking_point(seller,point) #판매자 랭킹 포인트 증가
     session['user_point'] = DB.get_user_point(session['id'])
-    return render_template("1~4/order.html")
+    return render_template("/1-4/order_item.html")
 
 
 # 5~7
@@ -126,17 +126,20 @@ def view_reg_review():
 
         user_id = session.get('id')
         purchase = DB.get_purchase(user_id)        #구매내역 불러오기
-        #if purchase == None:
-            #구매내역이 없는 경우에는 어떻게 할 것인가?
-        item_counts = len(purchase)
-        purchase = dict(list(purchase.items())[start_idx:end_idx])
-        tot_count = len(purchase)
-        for i in range(row_count):
-            if (i == row_count-1):
-                locals()['data_{}'.format(i)] = dict(list(purchase.items())[i*per_row:])
-            else:
-                locals()['data_{}'.format(i)] = dict(list(purchase.items())[i*per_row:(i+1)*per_row])
-        return render_template("/5-7/구매내역페이지.html", purchase=purchase.items(), row1=locals()['data_0'].items(), row2=locals()['data_1'].items(),
+        if purchase == None:                       #구매내역 
+            none = "Y"
+            return render_template("/5-7/mypage.html",none=none)
+        else:
+            none = "N"
+            item_counts = len(purchase)
+            purchase = dict(list(purchase.items())[start_idx:end_idx])
+            tot_count = len(purchase)
+            for i in range(row_count):
+                if (i == row_count-1):
+                    locals()['data_{}'.format(i)] = dict(list(purchase.items())[i*per_row:])
+                else:
+                    locals()['data_{}'.format(i)] = dict(list(purchase.items())[i*per_row:(i+1)*per_row])
+            return render_template("/5-7/mypage.html",none=none, purchase=purchase.items(), row1=locals()['data_0'].items(), row2=locals()['data_1'].items(),
                            row3=locals()['data_2'].items(), row4=locals()['data_3'].items(),row5=locals()['data_4'].items(), row6=locals()['data_5'].items(),
                            limit=per_page, page=page, page_count=int((item_counts/per_page)+1), total=item_counts)
 
@@ -168,15 +171,13 @@ def reg_review_init(name):
         flash('리뷰를 작성하려면 로그인을 해주세요.')
         return redirect(url_for('login'))
     else:
-        info = DB.reference('item')
-        info_data = info.child(name).get()
-        item_name = info_data.get("item_name",None)
-        professor = info_data.get("professor",None)
-        subject = info_data.get("course_number",None)
-        subject_id = info_data.get("subject_id",None)
-        writer = info_data.get("writer",None)
+        info = DB.get_item_byname(name)
+        item_name = info.get("item_name",None)
+        professor = info.get("professor",None)
+        subject = info.get("course_number",None)
+        writer = info.get("writer",None)
         reviewer = session['id']
-        return render_template("5-7/reg_reviews.html", writer=writer, item_name = item_name, reviewer=reviewer, subject=subject, professor=professor, subject_id=subject_id)
+        return render_template("5-7/reg_reviews.html", writer=writer, item_name = item_name, reviewer=reviewer, professor=professor)
 
 
 ## 전체리뷰화면 -> 헤더에 리뷰보기

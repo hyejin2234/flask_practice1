@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<!--수정해야 할 곳 검색 키워드: '추가'-->
+<!--클래스 통일/변경해야 할 곳 검색 키워드: '클래스통일'-->
+<!--백엔드연결 키워드: '백엔드'-->
+
+<head>
+    <meta charset="UTF-8">
+    <title>상품 구매 화면</title>
+    <link href="/static/1~4style.css" type="text/css" rel="stylesheet">
+    <link href="/static/style.css" type="text/css" rel="stylesheet">
+    <link href="/static/btn.css" type="text/css" rel="stylesheet">
+    <script src="/static/1~4main.js"></script>
+</head>
+
+<body> <!--1,8 가로폭 지정-->
+    {% extends 'index.html'%}
+    {% block section %}
+    {% with mesg = get_flashed_messages() %}
+    {% if mesg !=[] %}
+    <script>alert("{{ mesg[0] }}")</script>
+    {% endif %}
+    {% endwith %}
+    <main class="padding">
+        <section>
+            <!-------------------------구매완료안내----------------------->
+            <div class="flex-container1">
+                <h1>구매가 완료되었습니다!</h1>
+                <div>
+                     < {{data['item_name']}} >
+                        <!--임시 내용. 추후 삭제; 백엔드에서 받아오기-->
+                </div>
+            </div>
+            <!-------------------------결제품목상세안내------------------->
+            <div class="flex-container">
+                <div class="flex-container1" style="margin-top: 30pt;">
+                    <div class="flex-container2">
+                        <span class="orderInfo-header">과목</span>
+                        <span class="orderInfo-data">{{data.course_number}}</span> <!--백엔드-->
+                    </div>
+                    <div class="flex-container2">
+                        <span class="orderInfo-header">상품유형</span>
+                        <span class="orderInfo-data">{{data.course_type}}</span> <!--백엔드-->
+                    </div>
+                    <div class="flex-container2">
+                        <span class="orderInfo-header">페이지수</span>
+                        <span class="orderInfo-data">약8페이지</span> <!--백엔드-->
+                    </div>
+                    <div class="flex-container2">
+                        <span class="orderInfo-header">파일</span>
+                        <span class="orderInfo-data">오소플 중간고사 정리.pdf(8MB)</span> <!--백엔드-->
+                    </div>
+                    <div class="flex-container2">
+                        <span class="orderInfo-header">문의처</span>
+                        <span class="orderInfo-data">oreo@ewhain.net</span> <!--백엔드-->
+                    </div>
+
+                </div>
+                <div class="flex-container3">
+                    <!--다운링크로 이동-->
+                    <span><a href="/static/items/{{data['item_path']}}" download title="download" class="button btnFade btnDefaultblue">전자책 다운로드</a></span>
+                    <span><a href="/reg_review_init/{{data['item_path']}}" title="create-review" class="button btnFade btnBorderDefaultblue">리뷰
+                            작성하기(+100포인트)</a></span>
+                </div>
+                <div id="order_warning-msg">
+                    <p class="warning-msg">
+                        *본 자료는 대한민국 저작권법의 보호를 받고 있습니다. 저작권자 이외의 비인가된 유통이 발견 또는 제보될 시 민형사상의 엄격한 제재가 발생할 수 있습니다.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+    {% endblock section %}
+</body>
+
+</html>

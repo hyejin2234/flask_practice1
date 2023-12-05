@@ -187,13 +187,106 @@ class DBhandler:
         return target_value
 
 
-    #구매내역 불러오기
+    #구매내역 불러오기(commit!!!!!!!!!!!!!!)
     def get_purchase(self, user_id):
-        purchase = self.db.child("user_purchase").get().val() #각 유저의 구매내역
+        purchase = self.db.child("user_purchase_history").get().val() #각 유저의 구매내역
 
         for id, purchase_items in purchase.items(): #각 리뷰에 대해 반복
             if id == user_id:                       #key값이 사용자 id와 같으면 그 구매내역 반환
                 return purchase_items
         return None                                 #구매내역이 없는 경우
+    
+    
+    #상품 정보 등록하기
+    def insert_item(self, name, data, item_path, photo_path, user_id):
+        item_info = {
+            "writer": user_id,
+            "item_name": data['item_name'],
+            "item_type": data['item_type'],
+            "price": data['price'],
+            "course_type": data.get('course_type'),
+            "faculty": data.get('faculty'),
+            "major": data['major'],
+            "course_number": data['course_number'],
+            "professor": data['professor'],
+            "description": data['description'],
+            "tag": data['tag'],
+            "item_path": item_path,
+            "photo_path": photo_path,
+        }
+        user_and_item = user_id + '_' + data['item_name']
+        self.db.child("item").child(user_and_item).push(item_info)
+        print(data, item_path)
+        for path in photo_path:
+            print("사진 경로:", path)
+        return True
+    
+    #상품 정보 불러오기
+    def get_items(self):
+        items = self.db.child("item").get().val()
+        return items
+    
+    #상품 이름으로 상품 정보 가져오기
+    def get_item_byname(self, name):
+        items = self.db.child("item").get()
+        target_value=""
+        print("#############", name)
+        for res in items.each():
+            key_value = res.key()
+            if key_value == name:
+                target_value=res.val()
+        return target_value
+    
+
+    #heart 정보 가져오기
+    def get_heart_byname(self, uid, name):
+        hearts = self.db.child("heart").child(uid).get()
+        target_value=""
+        if hearts.val() == None:
+            return target_value
+        
+        for res in hearts.each():
+            key_value = res.key()
+        
+            if key_value == name:
+                target_value=res.val()
+        return target_value
+        
+    #heart 값 변경하기    
+    def update_heart(self, user_id, isHeart, item):
+        heart_info ={
+            "interested": isHeart
+        }
+        self.db.child("heart").child(user_id).child(item).set(heart_info)
+        return True
 
 
+    #사용자 포인트 가져오기
+    def get_user_point(self, name):
+        point=int(self.db.child("user").child(name).get().val()['point'])
+        return point
+    #사용자 랭킹포인트 가져오기
+    def get_user_ranking_point(self, name):
+        point=int(self.db.child("user").child(name).get().val()['rankingpoint'])
+        return point
+    #랭킹
+    #유저 전체 가져오기
+    def get_users(self ):
+        items = self.db.child("user").get().val()
+        return items
+    #유저 대학 별 정렬
+    def get_items_bycollege(self, cate):
+        items = self.db.child("user").get()
+        target_value=[]
+        target_key=[]
+        for res in items.each():
+            value = res.val()
+            key_value = res.key()
+            if value['college'] == cate:
+                target_value.append(value)
+                target_key.append(key_value)
+        print("######target_value",target_value)
+        new_dict={}
+        for k,v in zip(target_key,target_value):
+            new_dict[k]=v
+        return new_dict
