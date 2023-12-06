@@ -18,30 +18,33 @@
                         <h1 class="main-header">리뷰 작성</h1> 
                         <div class="main-hr__padding"></div><br>
                     </div>
-                        <!---------------->
+                    <!---------------->
                     <div class="grid-container-wrapper">
                         <div class="grid-container">
                             <div class="box left">
-                                <img src="../../static/img/logo.png" width="100%"style="max-height: 180px;" alt="상품 예시 사진입니다">
+                                {% for key, value in datas %}
+                                <img src="{{value.photo_path}}" width="100%"style="max-height: 180px; min-width: 90px;" alt="상품 예시 사진입니다">
+                                {% endfor %}
                             </div>
-
                             <div class="box middle">
                                 <!--상품  이름-->
-                                <input type="text" name="name" id="name" class="review-info__title" value="{{name}}"><br><br>
+                                <div class="review-info__title">
+                                    <input type="text" name="name" id="name" class="review-info__title" value="{{item_name}}" style="display: none;">
+                                    {{item_name}}
+                                </div><br>
                                 <div class="review-info__text">
                                     <!--subject 과목명-->
-                                    <input type="text" name="subject" id="subject" class="review-info__text" value="{{subject}}">
-                                    <span>|</span>
-                                    <input type="text" name="professor" id="professor" class="review-info__text" value="{{professor}}">
-                                    <span>|</span>
-                                    <input type="text" name="subject_id" id="subject_id" class="review-info__text" value="{{subject_id}}">
-                                </div>
-                                <div class="review-info__text">
-                                    <img src="../../static/img/logo.png" width="25px" height="25px">
-                                    <input type="text" name="seller_id" id="seller_id" class="review-info__text" value="{{seller_id}}" style="text-align: left;">
+                                    <div class="review-info__text">
+                                        {{subject_id}} | {{subject}} | {{professor}} 교수님
+                                    </div>
+                                    
+                                    <div class="review-info__text" style="display: flex;">
+                                        <img src="../../static/img/logo.png" width="25px" height="25px">&nbsp
+                                        <input type="text" name="seller_id" id="seller_id" class="review-info__text" value="{{writer}}" style="display: none;">
+                                        <span style="justify-self: center;">{{writer}}</span>
+                                    </div>
                                 </div>
                             </div>
-                        
                             <div class="box right">
                                 <div id="myform">
                                     <fieldset>
@@ -51,18 +54,18 @@
                                         <input type="radio" name="reviewStar" value="3" id="rate3"><label for="rate3">★</label>
                                         <input type="radio" name="reviewStar" value="2" id="rate4"><label for="rate4">★</label>
                                         <input type="radio" name="reviewStar" value="1" id="rate5"><label for="rate5">★</label>
-                                    </fieldset>
-                                </div>
-                                <script>
-                                    const radioInputs = document.querySelectorAll('input[type="radio"]');
-                                    const selectedRating = document.getElementById('selectedRating');
+                                        </fieldset>            
+                                        <script>
+                                            const radioInputs = document.querySelectorAll('input[type="radio"]');
+                                            const selectedRating = document.getElementById('selectedRating');
 
-                                    radioInputs.forEach((input) => {
-                                    input.addEventListener('change', () => {
-                                        selectedRating.textContent = input.value + '.0';
-                                    });
-                                    });
-                                </script>
+                                            radioInputs.forEach((input) => {
+                                            input.addEventListener('change', () => {
+                                                selectedRating.textContent = input.value + '.0';
+                                            });
+                                            });
+                                        </script>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -81,26 +84,27 @@
                             <input type="radio" name="keyword" id="문제풀이" value="문제 풀이" style="display: none;">
                         </label>
                     </div>
+
                     <script>//버튼 클릭할 때 색 변하게 하는 js
                         // JavaScript를 사용하여 라디오 버튼이 선택될 때 스타일 변경
                         const radioButtons = document.querySelectorAll('.keyword input[type="radio"]');
                         
                         radioButtons.forEach((radioButton) => {
-                          radioButton.addEventListener('change', () => {
+                            radioButton.addEventListener('change', () => {
                             // 모든 라벨에서 스타일 제거
                             document.querySelectorAll('.keyword label').forEach((label) => {
-                              label.style.backgroundColor = '';
-                              label.style.color = '';
+                                label.style.backgroundColor = '';
+                                label.style.color = '';
                             });
-                      
+                        
                             // 선택된 라벨에 스타일 적용
                             const selectedLabel = document.querySelector(`label[for="${radioButton.id}"]`);
                             selectedLabel.style.backgroundColor = '#00AFB9';
                             selectedLabel.style.color = '#ffffff';
-                          });
+                            });
                         });
-                      </script> 
-                
+                    </script> 
+
                     <h3>상세 리뷰</h3>
                     <input type="text" id="title" name="title" class="input-review-title" placeholder="리뷰의 제목을 입력해주세요">
                     <textarea style="width: 100%;" rows="7" id="title" name="review" class="input-review-main" placeholder="상품에 대한 리뷰를 작성해주세요&#13;&#10;&#13;&#10;정확하고 중요한 정보인가요?&#13;&#10;체계적으로 정리되어 있나요?&#13;&#10;어떤 방향으로 도움이 되었나요?"></textarea>                 
@@ -124,6 +128,6 @@
                 </form>
             </main>
             {% endblock section %}
-        </body>
+</body>
     
 </html>

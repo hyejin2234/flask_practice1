@@ -1,5 +1,7 @@
 import pyrebase
 import json 
+import time
+
 class DBhandler:
     def __init__(self ):
         with open('./authentication/firebase_auth.json') as f:
@@ -22,7 +24,7 @@ class DBhandler:
             "point":30000,
             "rankingpoint":0
         }
-        if self.id_duplicate_check(str(data['id'])) and self.nickname_duplicate_check(str(data['nickname'])):
+        if self.id_duplicate_check(str(data['id'])) and self.nickname_duplicate_check(str(data['nickname'])and (pw==pw2)):
             self.db.child("user").child(data['id']).set(user_info)
             print(data)
             return True
@@ -42,6 +44,7 @@ class DBhandler:
                 if value['id'] == id_string:
                     return False
             return True
+        
     # 회원가입 시 닉네임 중복확인
     def nickname_duplicate_check(self, name_string):
         users = self.db.child("user").get()
@@ -62,14 +65,34 @@ class DBhandler:
     
     #구매하기
     #가격 가져오기
-    def get_price(self, name):
-        point=int(self.db.child("item").child(name).get().val()['price'])
+    def get_price(self, item_name):
+
+        data = self.db.child("item").child(item_name).get().val()
+        point=int(self.db.child("item").child(item_name).get().val()['price'])
         return point
     #판매자 가져오기
     def get_seller(self, name):
         seller=self.db.child("item").child(name).get().val()['writer']
         return seller
     
+    #판매자 이메일 가져오기
+    def get_seller_email(self, item_name):
+        # "item" child에서 "name"에 해당하는 데이터의 "writer" 값을 가져오기
+        writer = self.db.child("item").child(item_name).get().val().get('writer')
+        if writer:
+            # "user" child에서 "id"가 "writer"와 일치하는 데이터 찾기
+            user_data = self.db.child("user").child(writer).get().val()
+            if user_data:
+                # 찾은 사용자의 정보에서 "email" 값을 반환
+                email = user_data.get('email')
+                return email
+        # 찾지 못한 경우 None 반환
+        return None
+
+
+
+
+
     #구매자 포인트 감소
     def update_point(self, user_id, point):
         user_data = self.db.child("user").child(user_id).get().val()
@@ -95,7 +118,7 @@ class DBhandler:
     #구매자 판매자 랭킹 포인트 증가
     def update_ranking_point(self, user_id, point):
         user_data = self.db.child("user").child(user_id).get().val()
-        if user_data is not None and 'point' in user_data:
+        if user_data is not None and 'rankingpoint' in user_data:
             b_point = int(user_data['rankingpoint'])
             a_point = b_point + point
             point_info = {
@@ -103,11 +126,9 @@ class DBhandler:
             }
             self.db.child("user").child(user_id).update(point_info)
         return True
-
-
-    ## 이 밑으로 쭉 다 내꺼
     
-    #데이터베이스에 저장
+    #리뷰
+    #리뷰 데이터베이스에 저장
     def reg_review(self, data, user_id, img_path):
         find_name = data['seller_id']+"_"+data['name'] #find_name=판매자id_상품명
         dbname = self.db.child("user").child(user_id).get() #db에 저장되어 있는 판매자id_상품명 찾기.
@@ -127,20 +148,20 @@ class DBhandler:
         name_id = find_name + '_' + user_id #판매자id_상품명_구매자id
         self.db.child("review").child(name_id).set(review_info)
         return True
-
-
-    #상품별 리뷰 불러오기(상품별 리뷰화면)
+    
+    #상품별 리뷰 불러오기
     def get_reviews(self, target_name):
-        all_review = self.db.child("review").get().val() #전체리뷰
+        all_review = self.db.child("review").get().val()
         target_reviews = {}
-
-        for review in all_review.each():                #각 리뷰에 대해 반복
-            name = review.child("name").get().val()       #각 리뷰에 name value 추출
+        
+        for review in all_review.each():
+            name = all_review.child("name").get().val()
             if name == target_name:
                 target_reviews[review.key()] = review.val()
-
+    
         return target_reviews
     
+
     #상품별 리뷰 카테고리별로 불러오기(대학별 정렬)
     def get_reviews_bycategory(self,target_name, cate):
         all_review = self.db.child("review").get().val() #전체리뷰
@@ -169,36 +190,41 @@ class DBhandler:
             
         return new_dict
     
-    
+
     #전체리뷰불러오기
     # def get_all_reviews(self):
-    #     all_reviews = self.db.child("review").get().val() 
-    #     return all_reviews
-
-    #이름으로 리뷰 불러오기(상세리뷰화면)
-    def get_review_byname(self, name):                #name=판매자id_상품명
+    #     reviews = self.db.child("review").get().val()
+    #     return reviews
+    
+    #이름으로 리뷰불러오기(상세리뷰화면)
+    def get_review_byname(self, name):
         reviews = self.db.child("review").get()
-        target_value=""
-        print("###########",name)
-        for res in reviews.each():                 #각 리뷰마다 반복
-            value = res.child("name").get().val()  #value = 리뷰내의 "name"(=판매자id_상품명)
-            if value == name:                      #value = name 일때
-                target_value=res.val()             #그 리뷰반환
+        target_value= {}
+        for res in reviews.each():
+            value = res.child("name").get().val()
+            if value == name:
+                target_value=res.val()
         return target_value
-
-
-    #구매내역 불러오기(commit!!!!!!!!!!!!!!)
-    def get_purchase(self, user_id):
-        purchase = self.db.child("user_purchase_history").get().val() #각 유저의 구매내역
-
-        for id, purchase_items in purchase.items(): #각 리뷰에 대해 반복
-            if id == user_id:                       #key값이 사용자 id와 같으면 그 구매내역 반환
-                return purchase_items
-        return None                                 #구매내역이 없는 경우
     
     
+    #사용자별 구매내역 저장하기
+    def insert_purchase_history(self, item_name, user_id):
+
+        timestamp = int(time.time())
+
+        purchase_info = {
+            "item_name": item_name,
+            "timestamp": timestamp
+        }
+        self.db.child("user_purchase_history").child(user_id).set(purchase_info)
+        return True
+    
+    #사용자별 구매내역 가져오기
+    def get_purchase_history(self, user_id):
+        return self.db.child("user_purchase_history").child(user_id).get().val()
+
     #상품 정보 등록하기
-    def insert_item(self, name, data, item_path, photo_path, user_id):
+    def insert_item(self, item_name, data, item_path, photo_path, user_id):
         item_info = {
             "writer": user_id,
             "item_name": data['item_name'],
@@ -207,15 +233,17 @@ class DBhandler:
             "course_type": data.get('course_type'),
             "faculty": data.get('faculty'),
             "major": data['major'],
+            "course_name": data['course_name'],
             "course_number": data['course_number'],
             "professor": data['professor'],
             "description": data['description'],
             "tag": data['tag'],
             "item_path": item_path,
             "photo_path": photo_path,
+            "download_count": 0
         }
         user_and_item = user_id + '_' + data['item_name']
-        self.db.child("item").child(user_and_item).push(item_info)
+        self.db.child("item").child(user_and_item).set(item_info)
         print(data, item_path)
         for path in photo_path:
             print("사진 경로:", path)
@@ -229,8 +257,7 @@ class DBhandler:
     #상품 이름으로 상품 정보 가져오기
     def get_item_byname(self, name):
         items = self.db.child("item").get()
-        target_value=""
-        print("#############", name)
+        target_value= {}
         for res in items.each():
             key_value = res.key()
             if key_value == name:
@@ -259,6 +286,24 @@ class DBhandler:
         }
         self.db.child("heart").child(user_id).child(item).set(heart_info)
         return True
+
+    #구매 버튼 누를 때마다 download 횟수 하나씩 늘려 저장
+    def increase_download_count(self, item_name):
+        # 현재 download_count 값을 가져옴
+        current_count = self.db.child("item").child(item_name).child("download_count").get().val()
+
+        # 현재 download_count 값을 1 증가시켜 업데이트
+        new_count = current_count + 1
+        self.db.child("item").child(item_name).update({"download_count": new_count})
+
+        return new_count
+
+    #현재 download 횟수 가져옴
+    def get_download_count(self, item_name):
+        # 현재 download_count 값을 가져와 반환
+        return self.db.child("item").child(item_name).child("download_count").get().val()
+
+
 
 
     #사용자 포인트 가져오기
@@ -289,4 +334,51 @@ class DBhandler:
         new_dict={}
         for k,v in zip(target_key,target_value):
             new_dict[k]=v
+        return new_dict
+    #아이템 전공 별 정렬
+    def get_items_bymajor(self, cate):
+        items = self.db.child("item").get()
+        target_value=[]
+        target_key=[]
+        for res in items.each():
+            value = res.val()
+            key_value = res.key()
+            if value['major'] == cate:
+                target_value.append(value)
+                target_key.append(key_value)
+        print("######target_value",target_value)
+        new_dict={}
+        for k,v in zip(target_key,target_value):
+            new_dict[k]=v
+        return new_dict
+    #아이템 타입 별 정렬
+    def get_items_bycoursetype(self, coursetype):
+        items = self.db.child("item").get()
+        target_value=[]
+        target_key=[]
+        for res in items.each():
+            value = res.val()
+            key_value = res.key()
+            if value['coursetype'] == coursetype:
+                target_value.append(value)
+                target_key.append(key_value)
+        print("######target_value",target_value)
+        new_dict={}
+        for k,v in zip(target_key,target_value):
+            new_dict[k]=v
+        return new_dict
+    #아이템 타입/전공 별 정렬
+    def get_items_bymajor_coursetype(self, major, course_type):
+        items = self.db.child("item").get()
+        target_value = []
+        target_key = []
+        for res in items.each():
+            value = res.val()
+            key_value = res.key()
+            if value['major'] == major and value['coursetype'] == course_type:
+                target_value.append(value)
+                target_key.append(key_value)
+        new_dict = {}
+        for k, v in zip(target_key, target_value):
+            new_dict[k] = v
         return new_dict

@@ -15,41 +15,45 @@
                     <h1 class="main-header">My Page</h1> 
                     <div class="main-hr__padding"></div><br>
                 </div>
-
-                <div class="grid-container-wrapper" >
-                    <div class="mypage-container">
-                        <div class="box left">
-                            <!--상품 사진-->
-                            <!--{% for key, value in datas %}-->
-                                <img src="../../static/img/logo.png" width="100%"style="max-height: 130px; min-width: 90px;" alt="상품 예시 사진입니다">
-                            <!--{% endfor %}-->
-                        </div>
-                            <!--{% for key, value in datas %}-->
-
-                        <div class="box middle" id="mypage-box-middle">
-                            <!--상품  제목-->
-                            <form class="mb-3" name="myform" method="post" action="" enctype="">
-                                <input type="text" name="name" id="name" class="review-info__title" value="오소플정리가나다라마바사아자차카"><br>
-                                    <!--subject 과목명-->
-                                <div class="review-info__text">
-                                    <p>12345/오소플 | 오세은교수님</p>
-                                    <!--
-                                    {{value.course_number}} | {{value.professor}} 교수님
-                                    -->
-                                </div>
-                                    
-                                <div class="review-info__text">
-                                    <img src="../../static/img/logo.png" width="25px" height="25px">
-                                    <input type="text" name="seller_id" id="seller_id" class="review-info__text" value="{{value.writer}}" style="text-align: left;">
-                                </div>
-                                <div class="review-info__text" id="justify-right">
-                                   <button class="button btnDefaultblue btnFade" id="reg-review-button" onclick="location.href='';" style="cursor:pointer;">리뷰작성하기</button>                                
-                                </div>
-                            </form>
-                    <!--{% endfor %}-->
-                        </div>
-                       
+                {% if total == 0 %}
+                <div>
+                    상품 구매 내역이 없습니다
                 </div>
+                {% endif %}
+
+                {% if total != 0 %}
+                    <div class="grid-container-wrapper" >
+                        <div class="mypage-container">
+                            <div class="box left">
+                                <!--상품 사진-->
+                                {% for key, value in row1 %}
+                                    <img src="../../static/img/logo.png" width="100%"style="max-height: 130px; min-width: 90px;" alt="상품 예시 사진입니다">
+                                {% endfor %}
+                            </div>
+                                {% for key, value in row1 %}
+
+                            <div class="box middle" id="mypage-box-middle">
+                                <!--상품  제목-->
+                                <form class="mb-3" name="myform" method="post" action="" enctype="">
+                                    <input type="text" name="name" id="name" class="review-info__title" value="오소플정리가나다라마바사아자차카"><br>
+                                        <!--subject 과목명-->
+                                    <div class="review-info__text">
+                                        <p>12345/오소플 | 오세은교수님</p>
+                                        {{value.course_number}} | {{value.professor}} 교수님
+                                    </div>
+                                        
+                                    <div class="review-info__text">
+                                        <img src="../../static/img/logo.png" width="25px" height="25px">
+                                        <input type="text" name="seller_id" id="seller_id" class="review-info__text" value="" style="text-align: left;">
+                                    </div>
+                                    <div class="review-info__text" id="justify-right">
+                                        <button class="button btnDefaultblue btnFade" id="reg-review-button" onclick="location.href='';" style="cursor:pointer;">리뷰작성하기</button>                                
+                                    </div>
+                                </form>
+                        {% endfor %}
+                            </div>
+                    </div>
+                {% endif %}    
             </main>
         {% endblock section %}
     </body>
