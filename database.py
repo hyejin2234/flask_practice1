@@ -134,6 +134,7 @@ class DBhandler:
         dbname = self.db.child("user").child(user_id).get() #db에 저장되어 있는 판매자id_상품명 찾기.
         college = dbname.val().get("college") #리뷰작성하는 유저의 대학 가지고옴 
         major = dbname.val().get("major")
+        timestamp = int(time.time())
         review_info ={
             "name": find_name, #판매자id_상품명
             "title": data['title'],
@@ -143,7 +144,8 @@ class DBhandler:
             "img_path": img_path,
             "reviewer": user_id,
             "reviewer_college": college,
-            "reviewer_major": major
+            "reviewer_major": major,
+            "timestamp": timestamp
         }
         name_id = find_name + '_' + user_id #판매자id_상품명_구매자id
         self.db.child("review").child(name_id).set(review_info)
@@ -167,7 +169,7 @@ class DBhandler:
         all_review = self.db.child("review").get().val() #전체리뷰
         target_reviews = {}
 
-        for review in all_review.each():                  #각 리뷰에 대해 반복
+        for review in all_review:                         #각 리뷰에 대해 반복
             name = review.child("name").get().val()       #각 리뷰에 name value 추출
             if name == target_name:
                 target_reviews[review.key()] = review.val() #target_reviews = 특정 상품에 대한 리뷰들
@@ -192,9 +194,9 @@ class DBhandler:
     
 
     #전체리뷰불러오기
-    # def get_all_reviews(self):
-    #     reviews = self.db.child("review").get().val()
-    #     return reviews
+    #def get_all_reviews(self):
+    #    reviews = self.db.child("review").get().val()
+    #    return reviews
     
     #이름으로 리뷰불러오기(상세리뷰화면)
     def get_review_byname(self, name):
@@ -207,7 +209,7 @@ class DBhandler:
         return target_value
     
     
-    #사용자별 구매내역 저장하기
+   #사용자별 구매내역 저장하기
     def insert_purchase_history(self, item_name, user_id):
 
         timestamp = int(time.time())
@@ -216,7 +218,7 @@ class DBhandler:
             "item_name": item_name,
             "timestamp": timestamp
         }
-        self.db.child("user_purchase_history").child(user_id).set(purchase_info)
+        self.db.child("user_purchase_history").child(user_id).child(item_name).set(purchase_info)
         return True
     
     #사용자별 구매내역 가져오기
