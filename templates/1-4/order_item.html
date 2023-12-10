@@ -36,16 +36,13 @@
                 <div class="flex-container1" style="margin-top: 30pt;">
                     <div class="flex-container2">
                         <span class="orderInfo-header">과목</span>
-                        <span class="orderInfo-data">{{data.course_number}}</span> <!--백엔드-->
+                        <span class="orderInfo-data">{{data.course_number}} {{data.course_name}}</span> <!--백엔드-->
                     </div>
                     <div class="flex-container2">
                         <span class="orderInfo-header">상품유형</span>
                         <span class="orderInfo-data">{{data.course_type}}</span> <!--백엔드-->
                     </div>
-                    <div class="flex-container2">
-                        <span class="orderInfo-header">페이지수</span>
-                        <span class="orderInfo-data">약8페이지</span> <!--백엔드-->
-                    </div>
+                    
                     <div class="flex-container2">
                         <span class="orderInfo-header">파일</span>
                         <span class="orderInfo-data">{{data.item_path}}</span> <!--백엔드-->
@@ -59,7 +56,7 @@
                 <div class="flex-container3">
                     <!--다운링크로 이동-->
                     <span><a href="/static/items/{{data['item_path']}}" download title="download" class="button btnFade btnDefaultblue">전자책 다운로드</a></span>
-                    <span><a href="/reg_review_init/{{key}}/" title="create-review" class="button btnFade btnBorderDefaultblue">리뷰
+                    <span><a href="/reg_review_init/{{item_name}}/" title="create-review" class="button btnFade btnBorderDefaultblue">리뷰
                             작성하기(+100포인트)</a></span>
                 </div>
                 <div id="order_warning-msg">

@@ -10,7 +10,7 @@
 
 <body>
     <!--11주차 교수님 제공 코드 복붙-->
-    {% include 'header-and-nav.html' %}
+    {% extends "index.html" %}
     {% block section %}
     {% with mesg = get_flashed_messages() %}
     {% if mesg !=[] %}
@@ -18,9 +18,9 @@
     {% endif %}
     {% endwith %}
 
-    <div class="main-header">
-        <h1 class="main-header__title"> 로그인 </h1>
-        <hr class="main-hr">
+    <div class="main-header-left padding">
+        <div class="main-header__title"> 로그인 </div>
+        <hr class="main-hr__padding">
     </div>
     <div class="outer">
         <div class="login-inner">
@@ -32,10 +32,10 @@
                 </div>
                 <br><br>
                 <div class="submit-btn">
-                    <button id="login-btn" class="btnFade btnDefaultblue"><b>로그인</b></button><br><br>
-                    <button id="signup-btn" class="btnFade btnBorderDefaultblue"><b>회원가입</b></button>
+                    <button id="login-btn" class="btnFade btnDefaultblue">로그인</button><br><br>
                 </div>
             </form>
+            <button id="signup-btn" class="btnFade btnBorderDefaultblue"><a href="/signup">회원가입</a></button>
         </div>
     </div>
 

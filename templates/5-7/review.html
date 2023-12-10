@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-    
     <head>
         <meta charset="UTF-8">
         <title>상품등록</title>
@@ -14,126 +13,254 @@
         <main class="padding" id="min_width_600">
             <!--페이지 정보-->
             <div class="main-header-left">
-                <div class="oneLine">
-                    <h1 class="main-header">리뷰</h1>
-                    <p>(92)</p><!--추가: 리뷰 숫자 받아와서 숫자 작성하는것-->
+                <div class="oneLine" style="height: 50px;">
+                    <div class="main-header__title">리뷰<span style="font-size: small;"></span></div>&nbsp;
+                    <span style="font-size:medium;">({{total}})</span><!--리뷰 숫자-->
                 </div>
-                    <hr class="main-hr__padding">     
+                    <hr class="main-hr__padding">
             </div> 
 
             <!--리뷰 요약-->
             <div class ="review-summary__box">
                 <!--좌측 별점-->
                 <div class="box left">
-                    <!---->
-                    <form class="mb-3" name="rate" id="rate" method="post">
-                        <fieldset style="border: none;">
-                            <p id="selectedRating" class="rating-num" style="margin-bottom: 5px; margin-top: 0%;">0.0</p>
-                            <div class="rating-container">
-                                <div class="rating-star" data-rating="5">★</div>
-                                <div class="rating-star" data-rating="4">★</div>
-                                <div class="rating-star" data-rating="3">★</div>
-                                <div class="rating-star" data-rating="2">★</div>
-                                <div class="rating-star" data-rating="1">★</div>
-                            </div>
-                        </fieldset>
-                    </form>
-                </div>    
+                    <p class="rating-num">평균 별점</p>
+                    <p class="rating-num">{{average_star}}</p>
+                </div>
+                
+                
                 
                 <!--우측 키워드와 그래프-->
                 <div class="box middle">
-                    <div>
-                        <p><!--추가: 숫자-->00%의 구매자가 <!--속성 중 하나--> <span style="color: #0081a7; font-size: large;">"자세한 설명"</span> 이라고 생각해요 </p>
-                        <table><!--바 추가해야 함-->
-                            <tr>
-                                <td>자세한 설명</td>
-                                <td>
-                                    <progress class="progress-bar" value="64" max="100"></progress>
-                                    <label class="progress-label">64%</label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>핵심 위주</td>
-                                <td>
-                                    <progress class="progress-bar" value="19" max="100"></progress>
-                                    <label class="progress-label">19%</label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>문제 풀이</td>
-                                <td>
-                                    <progress class="progress-bar" value="3" max="100"></progress>
-                                    <label class="progress-label">3%</label>
-                                </td>
-                            </tr>
-                        </table>
+                    <div class="review-summary-grid">
+                        <div style="grid-area: text;">
+                            <p><!--몇 퍼센트-->
+                            {% if proportion_1 >= proportion_2 and proportion_1 >= proportion_3 %}
+                                <span>{{ proportion_1 }}</span>
+                            {% elif proportion_2 >= proportion_1 and proportion_2 >= proportion_3 %}
+                                <span>{{ proportion_2 }}</span>
+                            {% else %}
+                                <span>{{ proportion_3 }}</span>
+                            {% endif %}
+    
+                            %의 구매자가 <span style="color: var(--default-blue); font-size: large;">
+                                {% if proportion_1 >= proportion_2 and proportion_1 >= proportion_3 %}
+                                    "자세한 설명"
+                                {% elif proportion_2 >= proportion_1 and proportion_2 >= proportion_3 %}
+                                    "핵심 위주"
+                                {% else %}
+                                    "문제풀이"
+                                {% endif %}
+                            </span>라고 생각해요 </p>
+                        </div>
+                        <div style="grid-area: keyword1;">자세한 설명</div>
+                        <div style="grid-area: keyword2;">핵심 위주</div>
+                        <div style="grid-area: keyword3;">문제 풀이</div>
+                        <div style="grid-area: bar1;"><progress class="progress-bar" value="{{proportion_1}}" max="100"></progress></div>
+                        <div style="grid-area: bar2;"><progress class="progress-bar" value="{{proportion_2}}" max="100"></progress></div>
+                        <div style="grid-area: bar3;"><progress class="progress-bar" value="{{proportion_3}}" max="100"></progress></div>
+                        <div style="grid-area: num1;">{{proportion_1}}%</div>
+                        <div style="grid-area: num2;">{{proportion_2}}%</div>
+                        <div style="grid-area: num3;">{{proportion_3}}%</div>
 
                     </div>
                 </div>
             </div>
+            
             <!--전체 리뷰-->
+            <!--sorting-->
             <div class="inLine">
                 <h3>
                 전체 리뷰
                 </h3>
                 <!--드롭다운 학과별 리뷰 선택-->
-                <form> 
+                <script>
+                    $(document).ready(function(){
+                        $('#major option:contains("{{major}}")').prop("selected", true);
+                    });
+                </script>
+                <form method="post" action="/review/{{name}}/" enctype="multipart/form-data">
                     <label for = "major"></label>
-                    <select id ="major" name="category">
-                        <option value="학과전체" selected>학과전체</option>
-                        <option value="인문과학대학">인문과학대학</option>
-                        <option value="사회과학대학">사회과학대학</option>
-                        <option value="자연과학대학">자연과학대학</option>
-                        <option value="엘텍공과대학">엘텍공과대학</option>
-                        <option value="음악대학">음악대학</option>
-                        <option value="조형예술대학">조형예술대학</option>
-                        <option value="사범대학">사범대학</option>
-                        <option value="경영대학">경영대학</option>
-                        <option value="신산업융합대학">신산업융합대학</option>
-                        <option value="의과대학">의과대학</option>
-                        <option value="간호대학">간호대학</option>
-                        <option value="약학대학">약학대학</option>
-                        <option value="스크랜튼대학">스크랜튼대학</option>
-                        <option value="호크마교양대학">호크마교양대학</option>
-                    </select>
-                    <label for = "organize"></label>
+                    <select id ="major" name="major" onchange="location=this.value">
+                        <option value="{{ url_for('view_review', name=name, page=i, major='학과전체') }}" selected>대학전체</option>
+                        <option value="{{url_for('view_review', name=name, page=i, major='인문과학대학')}}">인문과학대학</option>
+                        <option value="{{url_for('view_review', name=name, page=i, major='사회과학대학')}}">사회과학대학</option>
+                        <option value="{{url_for('view_review', name=name, page=i, major='자연과학대학')}}">자연과학대학</option>
+                        <option value="{{url_for('view_review', name=name, page=i, major='엘텍공과대학')}}">엘텍공과대학</option>
+                        <option value="{{url_for('view_review', name=name, page=i, major='음악대학')}}">음악대학</option>
+                        <option value="{{url_for('view_review', name=name, page=i, major='조형예술대학')}}">조형예술대학</option>
+                        <option value="{{url_for('view_review', name=name, page=i, major='사범대학')}}">사범대학</option>
+                        <option value="{{url_for('view_review', name=name, page=i, major='경영대학')}}">경영대학</option>
+                        <option value="{{url_for('view_review', name=name, page=i, major='신산업융합대학')}}">신산업융합대학</option>
+                        <option value="{{url_for('view_review', name=name, page=i, major='의과대학')}}">의과대학</option>
+                        <option value="{{url_for('view_review', name=name, page=i, major='간호대학')}}">간호대학</option>
+                        <option value="{{url_for('view_review', name=name, page=i, major='약학대학')}}">약학대학</option>
+                        <option value="{{url_for('view_review', name=name, page=i, major='스크랜튼대학')}}">스크랜튼대학</option>
+                        <option value="{{url_for('view_review', name=name, page=i, major='호크마교양대학')}}">호크마교양대학</option>
+                    </select> 
+
+
+                </form>                    
+                <script>
+                        $(document).ready(function(){
+                        $('#sorting option:contains("{{sorting}}")').prop("selected", true);
+                    });
+                </script>
                     <!--드랍다운 정렬 선택-->
-                    <select id="organize">
-                        <option value="최신순">최신순</option>
-                        <option value="추천순" selected>추천순</option>
-                        <option value="별점높은순">높은별점</option>
-                        <option value="낮은별점순">낮은별점</option>
+                <form method="post" action="/review/{{name}}/" enctype="multipart/form-data">
+                    <select id="sorting" name="sorting" onchange="location=this.value">
+                        <option value="{{url_for('view_review', name=name, page=i, sorting='최신순')}}">최신 리뷰</option>
+                        <option value="{{url_for('view_review', name=name, page=i, sorting='추천순')}}">자세한 리뷰</option>
+                        <option value="{{url_for('view_review', name=name, page=i, sorting='높은별점순')}}">높은 별점</option>
+                        <option value="{{url_for('view_review', name=name, page=i, sorting='낮은별점순')}}">낮은 별점</option>
                     </select>
                 </form>
             </div>
             <!--선-->
-            <div class="main-hr__padding" style="background-color: #BCBCBC;"></div>
+            <div class="main-hr__padding" style="background-color: #BCBCBC;margin-top: 10px;margin-bottom: 10px;"></div>
             <!--리뷰 보기-->
             <article style="padding-inline-start: 5%; padding-inline-end: 5%;">
-                
+<!------------------------------------------------리뷰 시작----------------------------------------------->
+                {% if total > 0 %}
+                    {%for key, value in datas%}
+                        <div class="review-grid-container" id="review{{ loop.index }}">
+                            <div class="container" style="grid-area: review;">
+                                <div>
+                                    <div class="rowcontainer">
+                                        <!--백: 리뷰 제목 불러오기-->
+                                        <div class="review-title">{{ value.title }}</div>
+                                        <!--백: 리뷰 작성 날짜 불러오기-->
+                                    </div>
+                                    <div class="rowcontainer" id="profile-rowcontainer">
+                                        <!--프로필 사진-->
+                                        <div class="review-profile"><img src="../../static/img/profile.jpg" width=100% height=100% alt=""></div>
+                                        <!--백: 작성자 아이디 앞 3글자만 보이게 불러오기-->
+                                        <div class="review-id">{{ value.reviewer }}</div>
+                                        <!--백: 작성자 전공 불러오기-->
+                                        <div class="review-major">{{ value.reviewer_major }}</div>
+                                        <div class="review-hr"></div>
+                                        <!--백: 별점 불러오기-->
+                                        <div>
+                                            <fieldset style="border:none ; padding: 0%; margin: 0%;" >
+                                                <div class="rating-container">
+                                                    <!--<div class="rating-star" id="review-rate" data-rating="5">★</div>-->
+                                                    {% for star in range(1, 6) %}
+                                                        {% if star|int <= value.rate|int %}
+                                                            <div class="rating-star" id="review-rate-filled" data-rating="{{ star }}">★</div>
+                                                        {% else %}
+                                                            <div class="rating-star" id="review-rate" data-rating="{{ star }}">☆</div>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                    <div class="rowcontainer">
+                                        <div class="review-main">
+                                            <!--백: 리뷰 불러오기-->
+                                            {{ value.review }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="container" style="grid-area: img; justify-content: right;">
+                                <!--백: 작성자 등록 대표 사진 불러오기-->
+                                <img src="../../static/photos/{{ value.img_path }}" class="review-img" alt="리뷰 사진이 없습니다">
+                            </div>
+                        </div>
+<!-----------------------------------------------------------모달--------------------------------------------------------->
+                        <div id="modalWrap{{ loop.index }}">
+                            <div class="detail-review-wrapper">
+                                <span id="closeBtn{{ loop.index }}">&times;</span>
+                                <div class="detail-review-container">
+                                    <h2 style="grid-area: header;">상세리뷰</h2>
+                                    <div class="main-hr__padding" style="grid-area: hr;"></div>
+                                    <div style="grid-area: title; padding-left: 5px;">
+                                            <!--백: 리뷰 제목 불러오기-->
+                                            <div class="detail-review-title">{{ value.title }}</div>
+                                    </div>
+                                    <div style="grid-area: class; padding-left: 5px;">
+                                        <div class="review-product">
+                                            {{ value.name }}
+                                        </div>
+                                    </div>
+                                    <div style="grid-area: reviewer; padding-left: 5px;">
+                                        <div class="rowcontainer">
+                                            <div class="detail-review-profile">
+                                                <img src="../../static/img/profile.jpg" width="100%" height="100%" alt="상품 예시 사진입니다"></div>
+                                            <!--백: 작성자 아이디 앞 3글자만 보이게 불러오기-->
+                                            <div class="detail-review-id">{{ value.reviewer }}</div>
+                                            <!--작성자 전공-->
+                                            <div class="detail-review-major">({{ value.reviewer_major }})</div>
+                                        </div>
+                                    </div>
+                                    <div style="grid-area: rating;">
+                                        <div class="rating-container">
+                                        {% for star in range(1, 6) %}
+                                            {% if star|int <= value.rate|int %}
+                                                <div class="rating-star" id="review-rate-filled" data-rating="{{ star }}">★</div>
+                                            {% else %}
+                                                <div class="rating-star" id="review-rate" data-rating="{{ star }}">☆</div>
+                                            {% endif %}
+                                        {% endfor %}
+                                        </div>
+                                    </div>
+                                    <div style="grid-area: tag; padding-left: 5px;">
+                                        <button type="button" class="btn-clicked" id="detail-review-tag-button">
+                                            {{value.keyword}}
+                                        </button>
+                                    </div>
+                                    <div style="grid-area: main; padding-left: 5px;">
+                                        <div class="detail-review-main">
+                                            <!--백: 리뷰 불러오기-->
+                                            {{ value.review }}
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="grid-area: picture; place-self: center;">
+                                        <!--백: 작성자 등록 대표 사진 불러오기-->
+                                        <img src="../../static/photos/{{ value.img_path }}" class="detail-review-img" alt="상품예시사진입니다">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <script>
+                            const btn{{ loop.index }} = document.getElementById('review{{ loop.index }}');
+                            const modal{{ loop.index }} = document.getElementById('modalWrap{{ loop.index }}');
+                            const closeBtn{{ loop.index }} = document.getElementById('closeBtn{{ loop.index }}');
+                            
+                            
+                            btn{{ loop.index }}.onclick = function() {
+                                modal{{ loop.index }}.style.display = 'block';
+                                document.body.style.overflow = 'hidden';
+                            }
+                            closeBtn{{ loop.index }}.onclick = function() {
+                                modal{{ loop.index }}.style.display = 'none';
+                                document.body.style.overflow = 'auto';
+                            }
+                        
+                            window.onclick = function(event) {
+                                if (event.target == modal{{ loop.index }}) {
+                                    modal{{ loop.index }}.style.display = "none";
+                                    document.body.style.overflow = 'auto';
+                                }
+                            } 
+                        </script>
+                        <div class="main-hr__padding" style="background-color: #BCBCBC; height: 0.5px;"></div>
 
-                <!--
-                {% include '5-7/individual_review.html' %}
-                <div class="main-hr__padding" style="background-color: #BCBCBC;"></div>
-                {% include '5-7/individual_review.html' %}
-                <div class="main-hr__padding" style="background-color: #BCBCBC;"></div>
-                {% include '5-7/individual_review.html' %}
-                <div class="main-hr__padding" style="background-color: #BCBCBC;"></div>
-                {% include '5-7/individual_review.html' %}
-                <div class="main-hr__padding" style="background-color: #BCBCBC;"></div>
-                {% include '5-7/individual_review.html' %}
-                -->
+                    {% endfor %}
+                    <div class="page-wrap">
+                        <div class="pagination">
+                            <ul>
+                                <li>
+                                {% for i in range(1, page_count + 1) %}  <!-- 페이지 번호 1부터 시작하도록 수정 -->
+                                    <a href="{{url_for('view_review', name=key, page=i)}}" color="black">{{i}}</a>
+                                {% endfor %} </li>
+                            </ul>
+                        </div>
+                    </div>
+                {% endif %}
             </article>
-            <!--페이지 선택 창-->
-            <ul class="pagination">
-                <li><a href="">&lt;</a></li>
-                <li><a href="">1</a></li>
-                <li><a href="">2</a></li>
-                <li><a href="">3</a></li>
-                <li><a href="">4</a></li>
-                <li><a href="">5</a></li>
-                <li><a href="">&gt;</a></li>
-            </ul>
             
         </main>
         {% endblock section %}

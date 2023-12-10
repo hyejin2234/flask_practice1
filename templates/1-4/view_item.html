@@ -10,7 +10,82 @@
     <link href="../../static/1~4style.css" type="text/css" rel="stylesheet">
     <link href="../../static/style.css" type="text/css" rel="stylesheet">
     <link href="../../static/btn.css" type="text/css" rel="stylesheet">
-    <script src="../../static/1~4main.js"></script>
+    <script src="../../static/main.js"></script>
+    <script>
+        function updateCourseMajor() {
+            var course_faculty = document.getElementById("search-course-faculty");
+            var course_major = document.getElementById("search-item__department");
+            //var course_type = document.getElementByID("coursetype");
+        
+            // Clear existing options
+            course_major.innerHTML = '';
+        
+            // Add new options based on the selected value in course_faculty
+            var selectedCollege = course_faculty.value;
+            if (selectedCollege === '인문과학대학') {
+                var options = ['국어국문학과', '중어중문학과', '불어불문학과', '독어독문학과', '사학과', '철학과', '기독교학과', '영어영문학부'];
+            } else if (selectedCollege === '사회과학대학') {
+                // Add options for other colleges as needed
+                var options = ['정치외교학과', '행정학과', '경제학과', '문헌정보학과', '사회학과', '사회복지학과', '심리학과', '소비자학과', '커뮤니케이션·미디어학부'];
+            }
+            else if (selectedCollege === '자연과학대학') {
+                // Add options for other colleges as needed
+                var options = ['수학과', '통계학과', '물리학과', '화학·나노과학전공', '생명과학전공'];
+            }
+            else if (selectedCollege === '엘텍공과대학') {
+                // Add options for other colleges as needed
+                var options = ['컴퓨터공학전공', '사이버보안전공', '전자전기공학전공', '식품공학전공', '화학신소재공학전공', '건축학전공', '건축도시시스템전공', '환경공학전공', '기후·에너지시스템공학전공', '휴먼기계바이오공학부'];
+            }
+            else if (selectedCollege === '음악대학') {
+                // Add options for other colleges as needed
+                var options = ['건반악기과', '관현악기과', '성악과', '작곡과', '한국음악과', '무용과'];
+            }
+            else if (selectedCollege === '조형예술대학') {
+                // Add options for other colleges as needed
+                var options = ['동양화전공', '서양화전공', '조소전공', '도자예술전공', '디자인학부', '섬유예술전공', '패션디자인전공'];
+            }
+            else if (selectedCollege === '사범대학') {
+                // Add options for other colleges as needed
+                var options = ['교육학과', '유아교육과', '초등교육과', '교육공학과', '특수교육과', '영어교육과', '사회교육과', '국어교육과', '과학교육과', '수학교육과'];
+            }
+            else if (selectedCollege === '경영대학') {
+                // Add options for other colleges as needed
+                var options = ['경영학부'];
+            }
+            else if (selectedCollege === '신산업융합대학') {
+                // Add options for other colleges as needed
+                var options = ['융합콘텐츠학과', '의류산업학과', '국제사무학과', '식품영양학과', '융합보건학과', '체육과학부'];
+            }
+            else if (selectedCollege === '의과대학') {
+                // Add options for other colleges as needed
+                var options = ['의예과', '의학과'];
+            }
+            else if (selectedCollege === '간호대학') {
+                // Add options for other colleges as needed
+                var options = ['간호학부'];
+            }
+            else if (selectedCollege === '약학대학') {
+                // Add options for other colleges as needed
+                var options = ['약학과'];
+            }
+            else if (selectedCollege === '스크랜튼대학') {
+                // Add options for other colleges as needed
+                var options = ['스크랜튼학부', '뇌·인지과학전공', '국제학부'];
+            }
+            else if (selectedCollege === '호크마교양대학') {
+                // Add options for other colleges as needed
+                var options = ['호크마교양대학'];
+            }
+        
+            // Add the new options to dropdown2
+            for (var i = 0; i < options.length; i++) {
+                var option = document.createElement("option");
+                option.value = options[i];
+                option.text = options[i];
+                course_major.appendChild(option);
+            }
+        }
+        </script>
 </head>
 
 <body> <!--1,8 가로폭 지정-->
@@ -18,26 +93,35 @@
         {% block section %}
     <main class="padding">
         <!-------------------------페이지 제목----------------------->
-        <div class="main-header">
-            <h1 class="main-header__title">상품 보기</h1>
+        <div class="main-header-left">
+            <div class="main-header__title">상품 보기</div>
             <hr class="main-hr__padding">
         </div>
         <!-------------------------상품검색-------------------------->
-        <section id="search-item">
-            <!---------------과목/학수번호검색--------------->
-            <!--과목명/학수번호-->
-            <input class="course-number" class="input-with-icon" type="search" name="course-number"
-                placeholder="과목명/학수번호">
-            <!--백엔드연동: 데이터베이스 내에서 검색하여 선택하게 함-->
-            <div>
+        <div id="search-box">
+            <div id="guide1">검색하기</div>
+            <form id="search-item" action="/search_item" method="get">
+                <!---------------과목 검색--------------->
+                <!--과목명-->
+                <input class="course-name" type="search" name="course_name"
+                    placeholder="과목명으로 검색하기 (정식 과목명을 띄어쓰기 없이 입력해주세요)">
+                    <button type="submit" value="검색" class="button btnFade btnDefaultblue">검색</button>
+            </form>
+            <div id="guide2">카테고리별로 보기</div>
+            <div id="search-filter">
                 <!--전공/교양-->
-                <select class="course-type" name="course-type" style="width:18%;">
-                    <option value="" disabled selected>전공/교양</option>
-                    <option value="major">전공</option>
-                    <option value="libral">교양</option>
+                <script>
+                    $(document).ready(function () {
+                        $('#coursetype option:contains("{{coursetype}}")').prop("selected", true);
+                        });
+                </script>
+                <select id="coursetype" name="coursetype" class="course-type" onchange="location=this.value">
+                    <option value="{{url_for('view_items', page=i, coursetype='all')}}" disabled selected>전공/교양</option>
+                    <option value="{{url_for('view_items', page=i, coursetype='전공')}}">전공</option>
+                    <option value="{{url_for('view_items', page=i, coursetype='교양')}}">교양</option>
                 </select>
                 <!--단과대-->
-                <select class="course-faculty" name="faculty" style="width:18%;" onchange="updateCoureMajor">
+                <select id="search-course-faculty" class="course-faculty" name="faculty" onchange="updateCourseMajor(); location=this.value;">
                     <option value="" disabled selected>단과대</option>
                     <option value="인문과학대학">인문과학대학</option>
                     <option value="사회과학대학">사회과학대학</option>
@@ -55,47 +139,29 @@
                     <option value="호크마교양대학">호크마교양대학</option>
                 </select>
                 <!--학과-->
-                <select id="search-item__department" name="department" style="width:18%;">
+                <select id="search-item__department" name="department" onchange="location=this.value">
                     <option value="" disabled selected>학과</option>
                     <!-- 옵션은 JavaScript로 동적으로 추가 -->
                     <!-- '단과대'의 입력에 따라 '학과'의 입력 가능 범위를 동적으로 변경-->
                 </select>
                 <!--타입-->
-                <span id="search-item__type">
-                    {% include '1-4/regitem__type.html' %}
-                </span>
+
             </div>
-        </section>
+            <div id="search-item__type">
+                {% include '1-4/regitem__type.html' %}
+            </div>
+        </div>
         <!-------------------------본컨텐츠-------------------------->
-        <div id="grid-item">
-            <!----------------------------필터---------------------------->
-            <aside id="filter">
-                <!--제목-->
-                <div class="filter__flex-container">
-                    <p class="filter__flex-item">필터</p>
-                    <input class="filter__flex-item" id="filter-reset-butn" type="reset" value="초기화">
-                </div>
-                <hr style="color: #f7f7f7;">
-                <form id="filter-body">
-                    <!--태그-->
-                    <label for="filter-body__tag">태그</label><br>
-                    <input id="filter-body__tag" type="text" name="filter-body__tag"><br><br>
-                    <!--판매자-->
-                    <label for="filter-body__seller">판매자</label><br>
-                    <input id="filter-body__seller" type="text" name="filter-body__seller"><br><br>
-                </form>
-                <!--백엔드연결--> <!--적용하기-->
-                <div><!--submit-->
-                    <input type="submit" value="적용하기" id="filter-submit" class="button btnFade btnLightblue">
-                </div>
-            </aside>
+        <div>
             <!-------------------------상품보기-------------------------->
             <section id="view-item">
                 <!------정렬------->
                 <div class="sorting"> <!--js-->
-                    <span onClick="sortby_regdate()">등록순</span> |
-                    <span onClick="sortby_popular()"> 인기순</span> |
-                    <span onClick="sortby_lowprice()"> 낮은 가격순</span>
+                    <form method="post" action="/view_item" enctype="multipart/form-data">
+                        <button type="submit"name="timesort" class="sortingbtn"> 최신등록순</button> 
+                        <button type="submit"name="popularsort" class="sortingbtn"> 인기순</button> |
+                        <button type="submit" name="pointsort" class="sortingbtn"> 낮은 가격순</button>
+                    </form>
                     <p> 현재까지 등록된 상품: {{total}} 개</p>
                 </div>
                 <!-----상품카드----->
@@ -103,22 +169,23 @@
                 {% if total > 0 %}                
                     {% for key, value in datas %}
                     <li>
+                        {% if loop.index <= limit %}
                         <div class="item-card" onclick="location.href='/1-4/view_item_detail/{{key}}/';" style="cursor:pointer;">
                             <!--백엔드에서 등록된 상품 regitem__photo-upload 불러오기-->
-                            <img class="item-card__img" src="/static/photos/{{value.photo_path}}">
+                            <div id="item-card__img-container"><img class="item-card__img" src="/static/photos/{{value.photo_path[0]}}"></div>
                             <div class="item-card__info">
                                 <div class="item-card__course-and-prof">
                                     <!--백엔드에서 등록된 상품의 과목, 교수님 정보 불러오기-->
-                                    {{value.course_number}} | {{value.professor}} 교수님
+                                    {{value.course_number}} {{value.course_name}} | {{value.professor}} 교수님
                                 </div>
-                                <strong class="item-card__item-name">
+                                <div class="item-card__title"><span class="item-card__item-name">
                                     <!--백엔드에서 등록된 item-name 불러오기-->
                                     {{value.item_name}}
-                                </strong>
+                                </span>
                                 <span class="item-card__seller">
                                     <!--백엔드에서 등록된 판매자 이름 불러오기-->
                                     BY. {{value.writer}}
-                                    <br><br></span>
+                                </span> </div>
                                 <div class="price-rate-container">
                                     <span class="item-card__price">
                                         <img class="input-img" src="../../static/img/point.svg"
@@ -127,36 +194,48 @@
                                         {{value.price}}
                                     </span>
                                     <span class="item-card__rate">
-                                        <span class="item-card__download" style="margin-right: 10px;">
+                                        <span class="item-card__download">
                                             <img class="input-img" src="../../static/img/download.svg">
                                             <!--다운로드/판매횟수 백엔드에서 불러오기-->
-                                            28
+                                            {{value.download_count}}
                                         </span>
                                         <span class="item-card__star">
                                             <img class="input-img" src="../../static/img/star.svg">
                                             <!--별점 백엔드에서 불러오기-->
-                                            4.8
+                                            <span style="width:46px; text-align: left;">
+                                            {%if value.average_star %} {{value.average_star}}
+                                            {%elif not value.download_count %} NEW!
+                                            {%else%} 0
+                                            {%endif%}</span>
                                         </span>
                                     </span>
                                 </div>
                                 <div class="item-card__tag">
                                     <!--백엔드에서 불러오기-->
-                                    {{value.tag}}
-                                </div>
-                                <div class="item-card__review">
-                                    <!--추가: 리뷰화면으로 연결-->
-                                    <a href="" style="border: 1.5px solid var(--light-grey);">리뷰</a>
-                                </div>
+                                    {% for tag in value.tag.split() %}
+                                        {% if tag.startswith('#') %}
+                                         {{tag}}
+                                         {% else %}
+                                         {{'#' + tag}}
+                                        {%endif%}
+                                    {% endfor %}
+                                </div>                                
+                            </div>
+                            <div class="item-card__review">
+                                    <!--추가: 리뷰화면으로 연결: 백에서 data['write']등의 값을 받아와서 넣기-->
+                                    <button onclick="itemcardReviewBtn('/review/{{value.key_name}}/')" class="btnFade btnBorderLightgrey">리뷰</button>
                             </div>
                         </div>
+                        {% endif %}
                     </li>
                     {% endfor %}
+
                     <!-- 페이지네이션을 위한 코드 시작 -->
                     <div class="page-wrap">
                         <div class="pagination">
                             <ul>
                                 <li>
-                                {% for i in range(page_count)%}
+                                {% for i in range(1, page_count + 1) %}  <!-- 페이지 번호 1부터 시작하도록 수정 -->
                                     <a href="{{url_for('view_items', page=i)}}" color="black">{{i}}</a>
                                 {% endfor %} </li>
                             </ul>

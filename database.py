@@ -1,6 +1,7 @@
 import pyrebase
 import json 
 import time
+from datetime import datetime
 
 class DBhandler:
     def __init__(self ):
@@ -47,7 +48,11 @@ class DBhandler:
         
     # 회원가입 시 닉네임 중복확인
     def nickname_duplicate_check(self, name_string):
+
         users = self.db.child("user").get()
+        if users is None or users.val() is None:
+            return True
+
         for res in users.each():
             value = res.val()
             if value['nickname'] == name_string:
@@ -88,10 +93,6 @@ class DBhandler:
                 return email
         # 찾지 못한 경우 None 반환
         return None
-
-
-
-
 
     #구매자 포인트 감소
     def update_point(self, user_id, point):
@@ -156,10 +157,10 @@ class DBhandler:
         all_review = self.db.child("review").get().val()
         target_reviews = {}
         
-        for review in all_review.each():
-            name = all_review.child("name").get().val()
+        for review_key, review_value in all_review.items():
+            name  = review_value.get("name")
             if name == target_name:
-                target_reviews[review.key()] = review.val()
+                target_reviews[review_key] = review_value
     
         return target_reviews
     
@@ -169,19 +170,20 @@ class DBhandler:
         all_review = self.db.child("review").get().val() #전체리뷰
         target_reviews = {}
 
-        for review in all_review:                         #각 리뷰에 대해 반복
-            name = review.child("name").get().val()       #각 리뷰에 name value 추출
+        for review_key, review_value in all_review.items():
+            name  = review_value.get("name")
             if name == target_name:
-                target_reviews[review.key()] = review.val() #target_reviews = 특정 상품에 대한 리뷰들
-                
-        reviews = target_reviews.get()
-        target_value=[]
-        target_key=[]
-        for res in reviews.each():
-            value = res.val()
-            key_value = res.key()
-            
-            if value['reviewer_college'] == cate:
+                target_reviews[review_key] = review_value  #target_reviews = 특정 상품에 대한 리뷰들
+
+        reviews = list(target_reviews.values())  # 딕셔너리의 값들을 리스트로 변환
+
+        target_value = []
+        target_key = []
+
+        for res in reviews:
+            value = res
+            key_value = review_key  # 루프에서 얻은 review_key를 사용
+            if value.get('reviewer_college') == cate:
                 target_value.append(value)
                 target_key.append(key_value)
         print("######target_value",target_value)
@@ -194,14 +196,15 @@ class DBhandler:
     
 
     #전체리뷰불러오기
-    #def get_all_reviews(self):
-    #    reviews = self.db.child("review").get().val()
-    #    return reviews
+    # def get_all_reviews(self):
+    #     reviews = self.db.child("review").get().val()
+    #     return reviews
     
     #이름으로 리뷰불러오기(상세리뷰화면)
     def get_review_byname(self, name):
         reviews = self.db.child("review").get()
-        target_value= {}
+        target_value=""
+        print("###########",name)
         for res in reviews.each():
             value = res.child("name").get().val()
             if value == name:
@@ -209,7 +212,7 @@ class DBhandler:
         return target_value
     
     
-   #사용자별 구매내역 저장하기
+    #사용자별 구매내역 저장하기
     def insert_purchase_history(self, item_name, user_id):
 
         timestamp = int(time.time())
@@ -227,6 +230,12 @@ class DBhandler:
 
     #상품 정보 등록하기
     def insert_item(self, item_name, data, item_path, photo_path, user_id):
+
+        timestamp = int(time.time())
+        datetime_obj = datetime.utcfromtimestamp(timestamp)
+        formatted_date = datetime_obj.strftime('%Y년 %m월 %d일 %H시 %M분 %S초')
+        key_name = user_id + '_' + item_name
+
         item_info = {
             "writer": user_id,
             "item_name": data['item_name'],
@@ -242,7 +251,11 @@ class DBhandler:
             "tag": data['tag'],
             "item_path": item_path,
             "photo_path": photo_path,
-            "download_count": 0
+            "download_count": 0,
+            "timestamp": formatted_date,
+            "average_star": 0,
+            "review_count": 0,
+            "key_name": key_name
         }
         user_and_item = user_id + '_' + data['item_name']
         self.db.child("item").child(user_and_item).set(item_info)
@@ -259,13 +272,34 @@ class DBhandler:
     #상품 이름으로 상품 정보 가져오기
     def get_item_byname(self, name):
         items = self.db.child("item").get()
-        target_value= {}
+        target_value={}
+        print("#############", name)
         for res in items.each():
             key_value = res.key()
             if key_value == name:
                 target_value=res.val()
         return target_value
     
+    #강의 이름으로 상품 정보 가져오기
+    def get_item_by_coursename(self, course_name):
+        items = self.db.child("item").get()
+        target_value=[]
+        target_key=[]
+        for res in items.each():
+            value=res.val()
+            key_value = res.key()
+            if value['course_name'] == course_name:
+                target_value.append(value)
+                target_key.append(key_value)
+        
+        print("######target_value", target_value)
+        new_dict={}
+
+        for k,v in zip(target_key, target_value):
+                new_dict[k]=v
+
+        return new_dict
+
 
     #heart 정보 가져오기
     def get_heart_byname(self, uid, name):
@@ -306,7 +340,41 @@ class DBhandler:
         return self.db.child("item").child(item_name).child("download_count").get().val()
 
 
+    #리뷰 등록할 때마다 review 횟수 하나씩 늘려서 저장
+    def increase_review_count(self, item_name):
+        print(item_name)
+        current_count = self.db.child("item").child(item_name).child("review_count").get().val()
+        print(current_count)
 
+        new_count = current_count + 1
+        self.db.child("item").child(item_name).update({"review_count": new_count})
+        
+    #저장된 review 개수 불러오기
+    def get_review_count(self, item_name):
+        return self.db.child("item").child(item_name).child("review_count").get().val()
+
+
+    #주어진 target_name(상품명)과 일치하는 리뷰의 별점 총합 계산하기
+    def get_reviews_sum(self, target_name):
+        reviews = self.db.child("review").get()
+        total_rate = 0
+        count = 0
+        for review_data in reviews.each():
+            review_data = review_data.val()  # `.each()`로 가져온 데이터는 `.val()` 메서드로 추출
+
+            # 각 리뷰의 name이 목표하는 name과 일치하는지 확인
+            if review_data.get("name") == target_name:
+                total_rate += int(review_data.get("rate", 0))
+                count += 1
+        return total_rate
+    
+    #리뷰 등록될 때마다 average_star 값 업데이트하기
+    def update_average_star(self, item_name, average_star):
+        self.db.child("item").child(item_name).update({"average_star": average_star})
+
+    #average_star 값 반환하기
+    def get_average_star(self, item_name):
+        return self.db.child("item").child(item_name).child("average_star").get().val()
 
     #사용자 포인트 가져오기
     def get_user_point(self, name):
@@ -322,7 +390,7 @@ class DBhandler:
         items = self.db.child("user").get().val()
         return items
     #유저 대학 별 정렬
-    def get_items_bycollege(self, cate):
+    def get_users_bycollege(self, cate):
         items = self.db.child("user").get()
         target_value=[]
         target_key=[]
@@ -361,7 +429,7 @@ class DBhandler:
         for res in items.each():
             value = res.val()
             key_value = res.key()
-            if value['coursetype'] == coursetype:
+            if value['course_type'] == coursetype:
                 target_value.append(value)
                 target_key.append(key_value)
         print("######target_value",target_value)
@@ -369,7 +437,23 @@ class DBhandler:
         for k,v in zip(target_key,target_value):
             new_dict[k]=v
         return new_dict
-    #아이템 타입/전공 별 정렬
+    #아이템타입 별 정렬
+    def get_items_byitemtype(self, coursetype):
+        items = self.db.child("item").get()
+        target_value=[]
+        target_key=[]
+        for res in items.each():
+            value = res.val()
+            key_value = res.key()
+            if value['item_type'] == coursetype:
+                target_value.append(value)
+                target_key.append(key_value)
+        print("######target_value",target_value)
+        new_dict={}
+        for k,v in zip(target_key,target_value):
+            new_dict[k]=v
+        return new_dict
+    #수업타입/전공 별 정렬
     def get_items_bymajor_coursetype(self, major, course_type):
         items = self.db.child("item").get()
         target_value = []
@@ -377,7 +461,53 @@ class DBhandler:
         for res in items.each():
             value = res.val()
             key_value = res.key()
-            if value['major'] == major and value['coursetype'] == course_type:
+            if value['major'] == major and value['course_type'] == course_type:
+                target_value.append(value)
+                target_key.append(key_value)
+        new_dict = {}
+        for k, v in zip(target_key, target_value):
+            new_dict[k] = v
+        return new_dict
+    #아이템타입/전공 별 정렬
+    def get_items_bymajor_item(self, major, item_type):
+        items = self.db.child("item").get()
+        target_value = []
+        target_key = []
+        for res in items.each():
+            value = res.val()
+            key_value = res.key()
+            if value['major'] == major and value['item_type'] == item_type:
+                target_value.append(value)
+                target_key.append(key_value)
+        new_dict = {}
+        for k, v in zip(target_key, target_value):
+            new_dict[k] = v
+        return new_dict
+    #아이템타입/수업타입 별 정렬
+    def get_items_bycoursetype_itemtype(self, coursetype, item_type):
+        items = self.db.child("item").get()
+        target_value = []
+        target_key = []
+        for res in items.each():
+            value = res.val()
+            key_value = res.key()
+            if value['course_type'] == coursetype and value['item_type'] == item_type:
+                target_value.append(value)
+                target_key.append(key_value)
+        new_dict = {}
+        for k, v in zip(target_key, target_value):
+            new_dict[k] = v
+        return new_dict
+    
+    #아이템타입/수업타입/전공 별 정렬
+    def get_items_bymajor_coursetype_itemtype(self, major, coursetype, itemtype):
+        items = self.db.child("item").get()
+        target_value = []
+        target_key = []
+        for res in items.each():
+            value = res.val()
+            key_value = res.key()
+            if value['course_type'] == coursetype and value['item_type'] == itemtype and value['major']==major:
                 target_value.append(value)
                 target_key.append(key_value)
         new_dict = {}

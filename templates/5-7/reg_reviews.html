@@ -7,24 +7,65 @@
             <link href="../../static/style.css" type="text/css" rel="stylesheet">
             <link href="../../static/5~7style.css" rel="stylesheet">
             <link href="../../static/btn.css" type="text/css" rel="stylesheet">
+            <script>
+document.addEventListener('DOMContentLoaded', function () {
+    // 이 함수는 submit 버튼이 클릭될 때 호출됩니다.
+    function submitForm() {
+        // 추가적인 유효성 검사
+        const reviewTitle = document.getElementById('title').value.trim();
+        const reviewContent = document.getElementById('review').value.trim();
+
+        if (reviewTitle === '' || reviewContent === '') {
+            alert('리뷰 제목과 내용을 모두 입력해주세요.');
+            return false;  // 폼 제출을 취소
+        }
+
+        // 폼을 서버로 제출합니다.
+        document.forms["myform"].submit();
+
+        // Redirect to mypage
+        window.location.href = "/5~7/reg_reviews";
+
+        return false;
+    }
+
+    // JavaScript를 사용하여 제출 버튼이 클릭되었을 때 유효성 검사
+    const submitButton = document.getElementById('submit');
+
+    submitButton.addEventListener('click', function (event) {
+        const selectedKeyword = document.querySelector('input[name="keyword"]:checked');
+        const selectedRate = document.querySelector('input[name="reviewStar"]:checked');
+
+        if (!selectedKeyword) {
+            event.preventDefault();  // 폼 제출을 취소
+            alert('키워드를 선택해주세요.');
+        } else if (!selectedRate) {
+            event.preventDefault();  // 폼 제출을 취소
+            alert('별점을 선택해주세요.');
+        } else {
+            // 키워드와 별점이 모두 선택되었을 때 폼 제출
+            submitForm();
+        }
+    });
+});
+
+            </script>
         </head>
         
         <body>
             {% extends "index.html" %}
             {% block section %}
             <main class="padding" id="min_width_600">
-                <form class="mb-3" name="myform" method="post" action="/reg_reviews" enctype="multipart/form-data">
-                    <div class="main-header">
-                        <h1 class="main-header">리뷰 작성</h1> 
-                        <div class="main-hr__padding"></div><br>
+                <form class="mb-3" name="myform" method="post" action="/reg_reviews" enctype="multipart/form-data" onclick="submitForm()">
+                    <div class="main-header-left">
+                        <div class="main-header__title">리뷰 작성</div>
+                        <hr class="main-hr__padding"></hr>
                     </div>
                     <!---------------->
                     <div class="grid-container-wrapper">
                         <div class="grid-container">
                             <div class="box left">
-                                {% for key, value in datas %}
-                                <img src="{{value.photo_path}}" width="100%"style="max-height: 180px; min-width: 90px;" alt="상품 예시 사진입니다">
-                                {% endfor %}
+                                <img src="../../static/photos/{{photo_path[0]}}" width="100%"style="max-height: 180px; min-width: 90px;" alt="상품 예시 사진입니다">
                             </div>
                             <div class="box middle">
                                 <!--상품  이름-->
@@ -32,28 +73,31 @@
                                     <input type="text" name="name" id="name" class="review-info__title" value="{{item_name}}" style="display: none;">
                                     {{item_name}}
                                 </div><br>
+                                <!--백으로 넘겨줄 hidden input-->
+                                <input type="hidden" name="item_name" value="{{item_name}}">
+                                <input type="hidden" name="writer" value="{{writer}}">
                                 <div class="review-info__text">
                                     <!--subject 과목명-->
                                     <div class="review-info__text">
-                                        {{subject_id}} | {{subject}} | {{professor}} 교수님
-                                    </div>
-                                    
-                                    <div class="review-info__text" style="display: flex;">
-                                        <img src="../../static/img/logo.png" width="25px" height="25px">&nbsp
-                                        <input type="text" name="seller_id" id="seller_id" class="review-info__text" value="{{writer}}" style="display: none;">
-                                        <span style="justify-self: center;">{{writer}}</span>
-                                    </div>
+                                        {{subject_num}} | {{subject}} | {{professor}} 교수님
+                                    </div>                                   
+                                </div><br>
+                                <div class="review-info__text" style="display: flex;">
+                                    <img src="../../static/img/logo.png" width="25px" height="25px">&nbsp
+                                    <input type="text" name="seller_id" id="seller_id" class="review-info__text" value="{{writer}}" style="display: none;">
+                                    <span style="justify-self: center;">{{writer}}</span>
                                 </div>
+
                             </div>
                             <div class="box right">
                                 <div id="myform">
                                     <fieldset>
-                                        <p id="selectedRating" class="rating-num">0.0</p>
+                                        <p id="selectedRating" name="rate" class="rating-num">0.0</p>
                                         <input type="radio" name="reviewStar" value="5" id="rate1"><label for="rate1">★</label>
                                         <input type="radio" name="reviewStar" value="4" id="rate2"><label for="rate2">★</label>
                                         <input type="radio" name="reviewStar" value="3" id="rate3"><label for="rate3">★</label>
                                         <input type="radio" name="reviewStar" value="2" id="rate4"><label for="rate4">★</label>
-                                        <input type="radio" name="reviewStar" value="1" id="rate5"><label for="rate5">★</label>
+                                        <input type="radio" name="reviewStar" value="1" id="rate5"><label for="rate5" required>★</label>
                                         </fieldset>            
                                         <script>
                                             const radioInputs = document.querySelectorAll('input[type="radio"]');
@@ -73,17 +117,23 @@
                     <h3>키워드</h3>
 
                     <div class="keyword">
-                        <label for="자세한설명">자세한 설명
-                            <input type="radio" name="keyword" id="자세한설명" value="자세한설명" style="display: none;">
+                        <label for="자세한설명">
+                            <input type="radio" name="keyword" id="자세한설명" value="자세한설명" style="display: none;" required>
+                            자세한 설명
                         </label>
                         &nbsp;
-                        <label for="핵심위주">핵심 위주
-                            <input type="radio" name="keyword" id="핵심위주" value="핵심 위주" style="display: none;">
+                        <label for="핵심위주">
+                            <input type="radio" name="keyword" id="핵심위주" value="핵심위주" style="display: none;" required>
+                            핵심 위주
                         </label>&nbsp;
-                        <label for="문제풀이">문제 풀이
-                            <input type="radio" name="keyword" id="문제풀이" value="문제 풀이" style="display: none;">
+                        <label for="문제풀이">
+                            <input type="radio" name="keyword" id="문제풀이" value="문제풀이" style="display: none;" required>
+                            문제 풀이
                         </label>
                     </div>
+                    
+
+                    
 
                     <script>//버튼 클릭할 때 색 변하게 하는 js
                         // JavaScript를 사용하여 라디오 버튼이 선택될 때 스타일 변경
@@ -99,32 +149,25 @@
                         
                             // 선택된 라벨에 스타일 적용
                             const selectedLabel = document.querySelector(`label[for="${radioButton.id}"]`);
-                            selectedLabel.style.backgroundColor = '#00AFB9';
+                            selectedLabel.style.backgroundColor = '#00324E';
                             selectedLabel.style.color = '#ffffff';
                             });
                         });
                     </script> 
 
                     <h3>상세 리뷰</h3>
-                    <input type="text" id="title" name="title" class="input-review-title" placeholder="리뷰의 제목을 입력해주세요">
-                    <textarea style="width: 100%;" rows="7" id="title" name="review" class="input-review-main" placeholder="상품에 대한 리뷰를 작성해주세요&#13;&#10;&#13;&#10;정확하고 중요한 정보인가요?&#13;&#10;체계적으로 정리되어 있나요?&#13;&#10;어떤 방향으로 도움이 되었나요?"></textarea>                 
+                    <input type="text" id="title" name="title" class="input-review-title" placeholder="리뷰의 제목을 입력해주세요" required>
+                    <textarea style="width: 100%;" rows="7" id="title" name="review" class="input-review-main" placeholder="상품에 대한 리뷰를 작성해주세요&#13;&#10;&#13;&#10;정확하고 중요한 정보인가요?&#13;&#10;체계적으로 정리되어 있나요?&#13;&#10;어떤 방향으로 도움이 되었나요?"required></textarea>                 
                     <!--글자수 카운트 만들기-->
                     <!--사진 첨부-->
                     <div class = "oneLine">
-                        <h3>사진 첨부</h3><br>
+                        <h3>사진 첨부(선택)</h3><br>
                         <!--사진수에 따라서 숫자 올라가게 만들기-->
-                        <p>(선택) 0/5</p><br>
                     </div>
                     <div>
-                        <label for="chooseFile" class="file-button">
-                            <p id="add-image">add image<br>+</p>
-                        </label>
                     </div>
-
-                    <input type="file" id="chooseFile" name="chooseFile" accept="image/*" onchange="loadFile(this)">
-
-                <!--제출 버튼-->
-                <input type="submit" value="등록" class="button btnDefaultblue btnFade" id="submit"> 
+                    <input type="file" accept="image/*" id="chooseFile" class="file-input" name="chooseFile" , placeholder="업로드할 사진을 선택해주세요.">
+                    <input type="submit" value="등록" class="button btnDefaultblue btnFade" id="submit"> 
                 </form>
             </main>
             {% endblock section %}

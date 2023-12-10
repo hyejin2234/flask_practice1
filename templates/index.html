@@ -1,37 +1,71 @@
-<!DOCTYPE html>  
+<!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Home</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
-        <script src="{{ url_for('static', filename='main.js') }}" defer></script>
-    </head>
-    <body>
-        {% include 'header-and-nav.html'%}
-        <ul class="navbar__menu">
-            <!--href 속 "\list" 등이 어디로 연결될지 application.py에서 정의해주어야 한다.-->
-            <p>페이지 접근 용이성을 위해 임시로 써놓음</p>
-            <li><a href="\1-4\1">상품 등록</a></li>
-            <li><a href="\1-4\view_item">전체상품조회</a></li>
-            <li><a href="\1-4\detail">상품세부정보</a></li>
-            <li><a href="\1-4\order_item">구매완료화면</a></li>
-            
-            <li><a href="\5-7\reg_reviews">리뷰작성</a></li>
-            <li><a href="\5-7\review">리뷰전체조회</a></li>
-            <li><a href="\5-7\review_detail">리뷰상세</a></li>
 
-            <li><a href="\8-10\signup">회원가입</a></li>
-            <li><a href="\8-10\login">로그인</a></li>
-            <li><a href="\8-10\ranking">랭킹</a></li>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <script src="{{ url_for('static', filename='main.js') }}" defer></script>
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+</head>
+
+<body>
+
+    <!--header and nav 긁-->
+    <header>
+        <!--logo-->
+        <span id="logo-container">
+            <p style="font-family: 'cafeMoya'; font-size: 60px; margin: 0;">808.</p>
+            <!--<a href="\index"><img id="logo" src="/static/img/logo.png"></a> -->
+        </span>
+        <!--내비게이션-->
+        <ul class="navbar nav-list">
+            <!--11주차 강의 내용 추가: 시작
+                {% if session['id'] %}
+                <li><a href="/logout"><b>{{session['id']}}님 반갑습니다!</b> logout</a></li>
+                {% else%}
+                <li><a href="/login"></a></li>
+                {% endif %}
+                11주차 강의 내용 추가: 끝-->
+            <li class="nav-item" onclick="location.href='/1-4/item_reg';" style="cursor:pointer;">상품 등록</li>
+            <li class="nav-item" onclick="location.href='/1-4/view_item';" style="cursor:pointer;">상품 보기</li>
+            <li class="nav-item" onclick="location.href='/5-7/reg_reviews';" style="cursor:pointer;">나의 구매내역</li>
+            <li class="nav-item" onclick="location.href='/ranking';" style="cursor:pointer;">랭킹</li>
         </ul>
-        <a href="#" class="navbar__toogleBtn"> <i class="fas fa-bars"></i> </a>
 
-        <section>
-            <!-- navigation bar와 같은 페이지의 중복 부분을 cpy하지 않고 서브 페이지에서 모두 동일하게 사용하도록 하는 코드 -->
-            {% block section %}
+        <!--프로필, 사용자이름, 로그아웃-->
+        <!--마이페이지:이화인클릭 / 로그인화면:로그아웃클릭-->
+        <div id="nav-account">
+                {% if session['id'] %}
+                <div id="nav-account__user">
+                    <img src="/static/img/profile.jpg">
+                    <!--<a href="">이화인</a> | <a href="../8~10/login">로그아웃</a></div>-->
+                    <a href="">{{session['id']}} </a> <span class="grey" style="padding: 0px 5px;"> | </span> <a href="/logout"> logout</a>
+                    </div>
+                    <div id="my-point">
+                        <a href="/ranking"> {{ session['user_point'] }} </a>
+                        <img class="input-img" style="max-width: 15px; padding-left: 5px;" src="/static/img/point.svg">
+                    </div>
+                {% else%}
+                <a href="/login">login</a> <span class="grey">|</span> <a href="/signup"> signup</a>
+                {% endif %}
+            
+        </div>
 
-            {% endblock section %}
-        </section>
-    </body>
+
+    </header>
+
+
+    <!--끝-->
+
+    <section>
+        <!-- navigation bar와 같은 페이지의 중복 부분을 cpy하지 않고 서브 페이지에서 모두 동일하게 사용하도록 하는 코드 -->
+        {% block section %}
+
+        {% endblock section %}
+    </section>
+
+</body>
+
 </html>

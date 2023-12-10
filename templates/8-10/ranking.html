@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link rel="stylesheet" href="../../static/style.css">
+    <link rel="stylesheet" href="../../static/8~10Style.css">
+</head>
+
+<body>
+
+    {% extends "index.html" %}
+    {% block section %}
+    <div class="main-header-left padding">
+        <div class="main-header__title"> 이화여자대학교 월간 포인트 랭킹 </div>
+        <hr class="main-hr__padding">
+    </div>
+
+    <div class="outer">
+        <div class="signup-inner">
+           <!-- 13주차 교수님 코드 <br>
+            <select id="college" name="college" onchange="location=this.value">
+                <option value="{{url_for('ranking', page=i, college='all')}}">전체</option>
+                <option value="{{url_for('ranking', page=i, college='인문과학대학')}}">인문과학대학</option>
+                <option value="{{url_for('ranking', page=i, college='사회과학대학')}}">사회과학대학</option>
+                <option value="{{url_for('ranking', page=i, college='자연과학대학')}}">자연과학대학</option>
+                
+            </select>
+        </div><br>-->
+
+        <!--btn-->
+        <br>
+        <div class="padding">
+            <button class="btn10" onclick="location.href='{{url_for('ranking', page=i, college='all')}}'">전체</button>
+            <button class="btn10" onclick="location.href='{{url_for('ranking', page=i, college='인문과학대학')}}'">인문과학대학</button>
+            <button class="btn10" onclick="location.href='{{url_for('ranking', page=i, college='사회과학대학')}}'">사회과학대학</button>
+            <button class="btn10" onclick="location.href='{{url_for('ranking', page=i, college='자연과학대학')}}'">자연과학대학</button>
+            <button class="btn10" onclick="location.href='{{url_for('ranking', page=i, college='엘텍공과대학')}}'">엘텍공과대학</button>
+            <button class="btn10" onclick="location.href='{{url_for('ranking', page=i, college='음악대학')}}'">음악대학</button>
+            <button class="btn10" onclick="location.href='{{url_for('ranking', page=i, college='조형예술대학')}}'">조형예술대학</button>
+            <button class="btn10" onclick="location.href='{{url_for('ranking', page=i, college='사범대학')}}'">사범대학</button>
+            <button class="btn10" onclick="location.href='{{url_for('ranking', page=i, college='경영대학')}}'">경영대학</button>
+            <button class="btn10" onclick="location.href='{{url_for('ranking', page=i, college='신산업융합대학')}}'">신산업융합대학</button>
+            <button class="btn10" onclick="location.href='{{url_for('ranking', page=i, college='의과대학')}}'">의과대학</button>
+            <button class="btn10" onclick="location.href='{{url_for('ranking', page=i, college='간호대학')}}'">간호대학</button>
+            <button class="btn10" onclick="location.href='{{url_for('ranking', page=i, college='약학대학')}}'">약학대학</button>
+            <button class="btn10" onclick="location.href='{{url_for('ranking', page=i, college='스크랜튼대학')}}'">스크랜튼대학</button>
+            <button class="btn10" onclick="location.href='{{url_for('ranking', page=i, college='인공지능대학')}}'">인공지능대학</button>
+            <button class="btn10" onclick="location.href='{{url_for('ranking', page=i, college='호크마교양대학')}}'">호크마교양대학</button> 
+        </div>
+        <br>
+
+
+        <!--랭킹 순위 별 프로필, 포인트 불러오기 백엔드 연동 필요: 유저네임, 유저프로필(img),  포인트(range의 value) 값 넣기-->
+        <div class="ranking-inner">
+            <p class="warning-msg">*총 거래 포인트(판매포인트+구매포인트)를 기준으로 한 순위입니다.</p>
+            {% if session['id'] %}           
+            <p>{{session['id']}}님의 랭킹포인트는 {{ user_rankingpoint }}p입니다.</p>  
+            {% else%}
+            <p>랭킹포인트 확인을 위해 로그인을 해주세요.</p>
+            {% endif %}
+
+            <table style="width: auto;">
+                {% for rank, user_data in datas %}
+                    <tr>
+                        <td> {{ loop.index }} </td>
+                        <td><img src="/static/img/profile.jpg"></td>
+                        <td> {{ user_data['nickname'] }} </td>
+                        <td>
+                            <div class="bar-container">
+                                <div class="bar" id="bar{{ rank }}"></div>
+                            </div>
+                        </td>
+                        <td>{{ user_data['rankingpoint'] }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+    </div>
+
+<!--페이지네이션-->
+    <div class="page-wrap">
+        <div class="pagination">
+            <ul>
+                <li>
+                {% for i in range(1, page_count + 1) %}
+                    <a href="{{url_for('ranking', page=i)}}" color="black">{{i}}</a>
+                {% endfor %} </li>
+            </ul>
+        </div>
+    </div>
+
+<!--버튼 hover, active 속성 변경 js 추가-->
+<!--js 유지하기 위해 브라우저 local storage에 저장하는 코드 포함-->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var buttons = document.querySelectorAll('.btn10');
+
+        // 눌러진 버튼 local storage set
+        var activeButtonIndex = localStorage.getItem('activeButtonIndex');
+        if (activeButtonIndex !== null) {
+            buttons[activeButtonIndex].classList.add('btn10-active');
+        }
+
+        // click
+        buttons.forEach(function (button, index) {
+            button.addEventListener('click', function () {
+                buttons.forEach(function (btn) {
+                    btn.classList.remove('btn10-active');
+                });
+                button.classList.add('btn10-active');
+
+                // 눌러진 버튼의 인덱스 local storage에 저장
+                localStorage.setItem('activeButtonIndex', index);
+            });
+
+
+            // hover
+            button.addEventListener('mouseover', function () {
+                button.classList.add('btn10-hover');
+            });
+
+            button.addEventListener('mouseout', function () {
+                button.classList.remove('btn10-hover');
+            });
+        });
+    });
+</script>
+
+
+    <script>
+    $(document).ready(function () {
+    // alert("{{college}}");
+    $('#college option:contains("{{college}}")').prop("selected", true);
+    });
+    </script>
+
+<!-- 선택된 college에 따라 상위 10위 랭킹 동적으로 구현하기 -->
+{% for rank, user_data in datas %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        setBarWidth('bar{{ rank }}', {{ user_data['rankingpoint'] }});
+    });
+
+    function setBarWidth(barId, value) {
+        const bar = document.getElementById(barId);
+        const width = (value / 1000000) * 100;
+        bar.style.width = width + '%';
+    }
+</script>
+{% endfor %}
+
+    {% endblock section %}
+</body>
+</html>
